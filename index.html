@@ -1348,7 +1348,11 @@ function buildDocHtml(){
       </div>
     </div>
 
-    <div class="doc-foot">Email : ${escapeHtml(SETTINGS.email||'')}</div>
+     <div class="doc-foot">
+  <span class="email-line">
+    Email : ${escapeHtml(SETTINGS.email||'')}
+  </span>
+</div>
   `;
 }
 function validateBeforeOutput(){
