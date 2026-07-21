@@ -1349,11 +1349,11 @@ function buildDocHtml(){
     </div>
 
      <div class="doc-foot">
-  <span class="email-line">
+  <span style="display:inline-block;border-top:1px solid #000;padding-top:4px;">
     Email : ${escapeHtml(SETTINGS.email||'')}
   </span>
 </div>
-  `;
+`;
 }
 function validateBeforeOutput(){
   const data = collectFormData();
