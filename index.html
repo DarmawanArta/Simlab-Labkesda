@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>SIMLAB — Sistem Informasi Laboratorium Dinas Kesehatan</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
     --bg:#F6F8F8;
@@ -187,6 +186,16 @@
   .pname{font-weight:600;}
   .chk{width:17px;height:17px;accent-color:var(--primary);}
   .param-group-row{background:var(--primary-100);color:var(--primary-dark);font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding:7px 10px !important;}
+  .param-group-main{background:var(--primary-dark);color:#fff;font-size:12px;}
+  .param-group-sub{background:var(--surface);color:var(--ink-soft);border-bottom:1px solid var(--line);font-weight:700;font-size:11px;padding-left:20px !important;}
+
+  .ms-wrap{position:relative;display:flex;gap:8px;}
+  .ms-wrap input[type=text]{flex:1;}
+  .ms-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line-strong);border-radius:9px;box-shadow:var(--shadow);padding:6px;max-height:230px;overflow-y:auto;z-index:60;}
+  .ms-item{display:flex;align-items:center;gap:9px;padding:7px 9px;font-size:13px;border-radius:7px;cursor:pointer;}
+  .ms-item:hover{background:var(--primary-100);}
+  .ms-item input{width:15px;height:15px;accent-color:var(--primary);}
+  .ms-empty{padding:10px;font-size:12px;color:var(--ink-faint);}
 
   .form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:18px;border-top:1px solid var(--line);}
 
@@ -206,9 +215,15 @@
   .empty-state svg{width:38px;height:38px;color:var(--ink-faint);margin-bottom:10px;}
 
   /* ---------- Param admin & settings ---------- */
-  .padmin-row{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 1.1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
+  .padmin-row{display:grid;grid-template-columns:1.3fr 0.9fr 0.9fr 0.7fr 1fr 0.8fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
   .padmin-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;}
-  .padmin-head{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 1.1fr auto;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line-strong);}
+  .padmin-head{display:grid;grid-template-columns:1.3fr 0.9fr 0.9fr 0.7fr 1fr 0.8fr auto;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line-strong);}
+  .dokter-admin-row{display:grid;grid-template-columns:1.4fr 1fr 1.4fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
+  .dokter-admin-row input[type=text]{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;width:100%;}
+  .ttd-cell{display:flex;align-items:center;gap:8px;}
+  .ttd-thumb{height:36px;max-width:110px;object-fit:contain;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px;}
+  .ttd-empty{font-size:11.5px;color:var(--ink-faint);}
+  .ttd-upload-btn{position:relative;overflow:hidden;}
 
   .user-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
   .user-row input,.user-row select{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;}
@@ -247,7 +262,7 @@
     @page{size:A4;margin:0;}
   }
   #printArea{width:210mm;margin:0 auto;padding:14mm 16mm;box-sizing:border-box;background:#fff;}
-  .doc{font-family:Arial,'Helvetica Neue',sans-serif;color:#000;font-size:11pt;}
+  .doc{font-family:Arial,'Helvetica Neue',sans-serif;color:#000;font-size:11pt;display:flex;flex-direction:column;min-height:269mm;}
   .doc-head{position:relative;text-align:center;padding-bottom:4px;margin-bottom:2px;}
   .doc-head .doc-logo{position:absolute;left:4px;top:2px;width:56px;height:auto;}
   .doc-head-text h1{margin:0;font-size:14pt;font-weight:400;line-height:1.25;text-align:center;}
@@ -271,21 +286,15 @@
   table.doc-table td.res{font-weight:700;}
   .doc-pemeriksa{font-size:8pt;margin:4px 0 0;}
   table.doc-table td.doc-group{background:#EDEFEE;font-weight:700;text-transform:uppercase;font-size:10.5pt;letter-spacing:.02em;border:1px solid #000;}
+  table.doc-table td.doc-group-main{background:#132B2A;color:#fff;font-size:11pt;}
+  table.doc-table td.doc-group-sub{background:#F6F8F8;font-size:9.5pt;padding-left:14px;}
   .doc-sign{display:flex;justify-content:flex-end;margin-top:20px;font-size:12pt;}
   .doc-sign .right{text-align:center;width:260px;}
   .doc-sign .right .gap{height:56px;}
+  .doc-sign .right .ttd-img{height:56px;max-width:220px;object-fit:contain;margin:0 auto;display:block;}
   .doc-sign .right .dname{text-decoration:underline;}
-  .doc-foot{
-  margin-top:auto;
-  padding-top:34px;
-  font-size:10pt;
-  text-align:center;
-}
-
-.email-line{
-  display:inline-block;
-  border-top:1px solid #000;
-  padding-top:4px;
+  .doc-foot{margin-top:auto;padding-top:14px;font-size:10pt;text-align:center;}
+  .email-line{display:inline-block;border-top:1px solid #000;padding-top:4px;
 }
 </style>
 </head>
@@ -347,6 +356,10 @@
       <button class="nav-btn" data-view="pengguna" onclick="goView('pengguna')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Kelola Pengguna
+      </button>
+      <button class="nav-btn" data-view="biaya" onclick="goView('biaya')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Perhitungan Biaya
       </button>
       <button class="nav-btn" data-view="pengaturan" onclick="goView('pengaturan')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -444,14 +457,25 @@
 
         <div class="section-title" style="margin-top:22px;"><span class="num">3</span> Pemeriksa &amp; Tanggal Hasil</div>
         <div class="grid-2">
-          <div class="field" style="grid-column:1/-1;"><label>Nama Pemeriksa</label><input type="text" id="pPemeriksa" list="dlPemeriksa" oninput="markDirty()" placeholder="cth. Ajeng Prameswari, A.Md.AK; Rose Ita S. W., A.Md.Kes">
-            <span class="hint">Pisahkan dengan titik koma (;) bila lebih dari satu. Mulai ketik untuk melihat saran dari daftar nama yang sudah disimpan.</span>
+          <div class="field" style="grid-column:1/-1;"><label>Nama Pemeriksa</label>
+            <div class="ms-wrap" id="msPemeriksaWrap">
+              <input type="text" id="pPemeriksa" oninput="markDirty()" placeholder="cth. Ajeng Prameswari, A.Md.AK; Rose Ita S. W., A.Md.Kes">
+              <button type="button" class="btn btn-sm btn-outline" onclick="toggleMsPanel()">▾ Pilih</button>
+              <div class="ms-panel hidden" id="msPemeriksaPanel"></div>
+            </div>
+            <span class="hint">Ketik manual dan pisahkan dengan titik koma (;), atau klik "▾ Pilih" untuk mencentang beberapa nama sekaligus dari daftar tersimpan.</span>
           </div>
           <div class="field"><label>Tanggal Hasil</label><input type="date" id="pTglHasil" oninput="markDirty()"></div>
-          <div class="field"><label>Dokter Penanggung Jawab</label><input type="text" id="pDokterPJ" list="dlDokter" oninput="markDirty()" placeholder="cth. dr. Fara Nayo F., M.Ked.Klin., Sp.MK"></div>
+          <div class="field"><label>Dokter Penanggung Jawab</label><input type="text" id="pDokterPJ" list="dlDokter" oninput="markDirty(); isiOtomatisNip();" placeholder="cth. dr. Fara Nayo F., M.Ked.Klin., Sp.MK"></div>
           <div class="field"><label>NIP Dokter</label><input type="text" id="pNip" oninput="markDirty()" placeholder="cth. NIP. 197711152024212003"></div>
+          <div class="field" style="grid-column:1/-1;">
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="pUseTtd" onchange="markDirty()" style="width:auto;">
+              Gunakan tanda tangan digital dokter pada hasil cetak
+            </label>
+            <span class="hint">Centang bila dokter di atas berhalangan hadir untuk tanda tangan basah. Gambar TTD diambil dari data dokter yang diatur di menu Pengaturan Umum — bila belum ada TTD tersimpan untuk dokter tersebut, hasil cetak tetap memakai baris tanda tangan kosong seperti biasa.</span>
+          </div>
         </div>
-        <datalist id="dlPemeriksa"></datalist>
         <datalist id="dlDokter"></datalist>
 
         <div class="form-actions">
@@ -501,9 +525,10 @@
       <div class="card card-pad">
         <div class="section-title">Daftar Parameter Pemeriksaan</div>
         <div class="section-desc">Tambah, ubah, atau hapus parameter tanpa mengubah kode program. Perubahan berlaku langsung pada formulir input.</div>
-        <div class="section-desc">Isi kolom <b>Kategori</b> untuk mengelompokkan tampilan hasil cetak (mis. "Hematologi", "Gula Darah", "Faal Hati"). Parameter dengan kategori sama akan dicetak berurutan di bawah satu judul kelompok. Urutan baris di sini menentukan urutan tampil.</div>
-        <div class="padmin-head"><div>Nama Parameter</div><div>Kategori</div><div>Satuan</div><div>Nilai Rujukan Default</div><div></div></div>
+        <div class="section-desc">Isi <b>Kategori Utama</b> bila parameter ini punya kelompok besar yang membawahi beberapa sub-kelompok (mis. "Kimia Klinik" membawahi "Gula Darah", "Faal Ginjal", "Lemak", dst). Kosongkan Kategori Utama bila kategorinya berdiri sendiri (mis. "Hematologi", "Imunoserologi"). Isi kolom <b>Kategori</b> untuk sub-kelompoknya (mis. "Gula Darah", "Faal Hati") — ini yang dipakai mengelompokkan tampilan hasil cetak. Urutan baris di sini menentukan urutan tampil.</div>
+        <div class="padmin-head"><div>Nama Parameter</div><div>Kategori Utama</div><div>Kategori</div><div>Satuan</div><div>Nilai Rujukan Default</div><div>Harga (Rp)</div><div></div></div>
         <div id="paramAdminList"></div>
+        <datalist id="dlKategoriUtama"></datalist>
         <datalist id="dlKategori"></datalist>
         <button class="btn btn-outline" style="margin-top:14px;" onclick="tambahParameterBaris()">+ Tambah Parameter</button>
         <div class="form-actions">
@@ -542,9 +567,10 @@
             <textarea id="setPemeriksaList" rows="4" placeholder="Ajeng Prameswari, A.Md.AK&#10;Agita Fortuna Septa N., A.Md.Kes"></textarea>
             <span class="hint">Daftar ini akan muncul sebagai saran dropdown pada kolom "Nama Pemeriksa" di formulir input.</span>
           </div>
-          <div class="field" style="grid-column:1/-1;"><label>Daftar Nama Dokter Penanggung Jawab (satu nama per baris)</label>
-            <textarea id="setDokterList" rows="3" placeholder="dr. Fara Nayo F., M.Ked.Klin., Sp.MK"></textarea>
-            <span class="hint">Daftar ini akan muncul sebagai saran dropdown pada kolom "Dokter Penanggung Jawab" di formulir input.</span>
+          <div class="field" style="grid-column:1/-1;"><label>Daftar Dokter Penanggung Jawab &amp; Tanda Tangan Digital</label>
+            <div id="dokterAdminList"></div>
+            <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="tambahDokterBaris()">+ Tambah Dokter</button>
+            <span class="hint">Unggah gambar tanda tangan (disarankan PNG latar transparan, maks. 500KB) untuk dipakai otomatis di hasil cetak saat dokter yang bersangkutan berhalangan hadir memberi tanda tangan basah. Centang "Gunakan tanda tangan digital" pada formulir Input Hasil untuk memakainya.</span>
           </div>
         </div>
         <div class="section-desc" style="margin-top:-4px;">Nama & NIP Dokter Penanggung Jawab kini diisi langsung di formulir Input Hasil (karena bisa berbeda tiap pemeriksaan), jadi tidak perlu diatur di sini lagi. Logo yang tampil pada hasil cetak adalah logo Kota Surabaya yang diambil dari berkas contoh Anda. Beri tahu saya jika perlu diganti dengan logo instansi lain.</div>
@@ -552,8 +578,41 @@
       </div>
     </div>
 
+    <!-- ============ PERHITUNGAN BIAYA ============ -->
+    <div id="view-biaya" class="view hidden">
+      <div class="stat-grid">
+        <div class="card stat-card"><div class="n" id="biayaHariIni">Rp 0</div><div class="l">Total Biaya Hari Ini</div></div>
+        <div class="card stat-card"><div class="n" id="biayaBulanIni">Rp 0</div><div class="l">Total Biaya Bulan Ini</div></div>
+        <div class="card stat-card"><div class="n" id="biayaTahunIni">Rp 0</div><div class="l">Total Biaya Tahun Ini</div></div>
+      </div>
+      <div class="card card-pad" style="margin-bottom:16px;">
+        <div class="section-title">Rekap per Periode</div>
+        <div class="section-desc">Biaya dihitung dari harga tiap parameter (diatur di menu Kelola Parameter) yang dipilih pada setiap Nomor Lab, berdasarkan Tanggal Periksa. Pilih rentang tanggal untuk melihat rekap harian, bulanan, atau tahunan.</div>
+        <div class="grid-2">
+          <div class="field"><label>Dari Tanggal</label><input type="date" id="biayaDari" onchange="renderBiayaRekap()"></div>
+          <div class="field"><label>Sampai Tanggal</label><input type="date" id="biayaSampai" onchange="renderBiayaRekap()"></div>
+        </div>
+        <div class="section-desc" style="margin-top:-4px;">Total periode terpilih: <b id="biayaPeriodeTotal">Rp 0</b> dari <b id="biayaPeriodeJumlah">0</b> Nomor Lab.</div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-title">Rincian per Nomor Lab</div>
+        <div class="param-table-wrap">
+          <table class="param-table">
+            <thead><tr><th>Nomor Lab</th><th>Nama Pasien</th><th>Tgl. Periksa</th><th>Jml. Parameter</th><th style="text-align:right;">Total Biaya</th></tr></thead>
+            <tbody id="biayaTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ============ BACKUP/RESTORE ============ -->
     <div id="view-backup" class="view hidden">
+      <div class="card card-pad" style="margin-bottom:16px;">
+        <div class="section-title">Status Koneksi Database</div>
+        <div class="section-desc">Gunakan ini bila indikator status di pojok kanan atas menunjukkan "Offline", untuk melihat penyebab pastinya.</div>
+        <button class="btn btn-outline" onclick="tesKoneksiDb()">Tes Koneksi Sekarang</button>
+        <pre id="dbTestResult" style="margin-top:12px;font-family:var(--font-mono);font-size:12px;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;"></pre>
+      </div>
       <div class="card card-pad" style="margin-bottom:16px;">
         <div class="section-title">Backup Database</div>
         <div class="section-desc">Unduh seluruh data (pasien, parameter, pengguna, pengaturan) sebagai satu berkas cadangan (.json).</div>
@@ -594,7 +653,10 @@ async function cloudGet(key){
   const res = await fetch(SUPABASE_URL + 'kv_store?key=eq.' + encodeURIComponent(key) + '&select=value', {
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
   });
-  if(!res.ok) throw new Error('Gagal mengambil data dari server (' + res.status + ')');
+  if(!res.ok){
+    const body = await res.text().catch(()=> '');
+    throw new Error('HTTP ' + res.status + ' — ' + body.slice(0,300));
+  }
   const arr = await res.json();
   return arr.length ? arr[0].value : undefined;
 }
@@ -609,34 +671,90 @@ async function cloudSet(key, value){
     },
     body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
   });
-  if(!res.ok) throw new Error('Gagal menyimpan data ke server (' + res.status + ')');
+  if(!res.ok){
+    const body = await res.text().catch(()=> '');
+    throw new Error('HTTP ' + res.status + ' — ' + body.slice(0,300));
+  }
+}
+// Hapus baris sungguhan dari kv_store (dipakai untuk key seperti draf yang
+// perlu benar-benar hilang). Tidak memakai upsert dengan value:null karena
+// kolom "value" pada beberapa skema Supabase bertipe NOT NULL, sehingga
+// upsert null akan gagal secara diam-diam dan draf lama tetap tersimpan.
+async function cloudDelete(key){
+  const res = await fetch(SUPABASE_URL + 'kv_store?key=eq.' + encodeURIComponent(key), {
+    method: 'DELETE',
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+  });
+  if(!res.ok){
+    const body = await res.text().catch(()=> '');
+    throw new Error('HTTP ' + res.status + ' — ' + body.slice(0,300));
+  }
 }
 
-let CLOUD_OK = true; // status koneksi terakhir, dipakai untuk indikator di UI
+let CLOUD_OK = true;      // status koneksi terakhir, dipakai untuk indikator di UI
+let LAST_CLOUD_ERROR = ''; // detail error terakhir, untuk diagnostik di halaman Backup & Restore
 
 async function sGet(key, fallback){
   try{
     const value = await cloudGet(key);
-    CLOUD_OK = true;
+    CLOUD_OK = true; LAST_CLOUD_ERROR = '';
     if(value !== undefined){
       try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
       return value;
     }
-  }catch(e){ CLOUD_OK = false; }
-  // Cadangan offline bila server tidak terjangkau
+    // Server terjangkau dan memastikan tidak ada baris untuk key ini (mis. draf
+    // yang sudah dihapus). Ini status yang sah, bukan koneksi terputus — jadi
+    // percaya hasil server dan bersihkan cache lokal yang mungkin sudah usang,
+    // alih-alih malah membaca localStorage lama di bawah.
+    try{ localStorage.removeItem(key); }catch(e){}
+    return fallback;
+  }catch(e){ CLOUD_OK = false; LAST_CLOUD_ERROR = e.message || String(e); console.error('SIMLAB cloud error (get):', e); }
+  // Cadangan offline bila server benar-benar tidak terjangkau
   try{
     const raw = localStorage.getItem(key);
     return raw !== null ? JSON.parse(raw) : fallback;
   }catch(e){ return fallback; }
 }
 async function sSet(key, value){
+  // Penghapusan (value null/undefined) memakai DELETE sungguhan, bukan upsert
+  // null — lihat catatan di cloudDelete().
+  if(value === null || value === undefined){
+    try{ localStorage.removeItem(key); }catch(e){}
+    try{
+      await cloudDelete(key);
+      CLOUD_OK = true; LAST_CLOUD_ERROR = '';
+    }catch(e){
+      CLOUD_OK = false; LAST_CLOUD_ERROR = e.message || String(e);
+      console.error('SIMLAB cloud error (delete):', e);
+    }
+    updateConnBadge();
+    return;
+  }
   try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
   try{
     await cloudSet(key, value);
-    CLOUD_OK = true;
+    CLOUD_OK = true; LAST_CLOUD_ERROR = '';
   }catch(e){
-    CLOUD_OK = false; // tersimpan lokal dulu, akan tertunda sampai koneksi kembali
+    CLOUD_OK = false; LAST_CLOUD_ERROR = e.message || String(e); // tersimpan lokal dulu, akan tertunda sampai koneksi kembali
+    console.error('SIMLAB cloud error (set):', e);
   }
+  updateConnBadge();
+}
+async function tesKoneksiDb(){
+  const out = document.getElementById('dbTestResult');
+  out.textContent = 'Menguji koneksi ke Supabase…';
+  out.style.color = 'var(--ink-soft)';
+  try{
+    await cloudGet(KEYS.SETTINGS);
+    CLOUD_OK = true; LAST_CLOUD_ERROR='';
+    out.textContent = '✔ Berhasil terhubung ke database Supabase.';
+    out.style.color = 'var(--success)';
+  }catch(e){
+    CLOUD_OK = false; LAST_CLOUD_ERROR = e.message || String(e);
+    out.textContent = '✘ Gagal terhubung: ' + LAST_CLOUD_ERROR + '\n\nPenyebab paling umum: skrip SQL (supabase-setup.sql) belum dijalankan di Supabase, sehingga tabel "kv_store" belum ada — atau Project URL/anon key tidak sesuai.';
+    out.style.color = 'var(--danger)';
+  }
+  updateConnBadge();
 }
 
 /* =========================================================================
@@ -653,23 +771,45 @@ let AUTOSAVE_TIMER = null;
 // Logo Kota Surabaya — diambil langsung dari berkas Master_Hasil_Kosongan.xlsx yang diunggah.
 const LOGO_B64 = "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";
 
+// Catatan: DEFAULT_PARAMS hanya dipakai sekali saat instalasi baru (belum ada
+// data tersimpan sama sekali di Supabase/localStorage). Untuk instalasi yang
+// sudah berjalan, ubah/lengkapi kolom "Kategori Utama" lewat menu Kelola
+// Parameter — mengubah daftar ini tidak memengaruhi data yang sudah ada.
 const DEFAULT_PARAMS = [
-  {id:'p1', kategori:'Hematologi', nama:'Hemoglobin (Hb)', satuan:'g/dL', rujukan:'13.0–17.0 (L) / 12.0–15.0 (P)'},
-  {id:'p2', kategori:'Hematologi', nama:'Leukosit', satuan:'/µL', rujukan:'4.000–10.000'},
-  {id:'p3', kategori:'Hematologi', nama:'Eritrosit', satuan:'juta/µL', rujukan:'4.5–5.5'},
-  {id:'p4', kategori:'Hematologi', nama:'Hematokrit', satuan:'%', rujukan:'37–48'},
-  {id:'p5', kategori:'Hematologi', nama:'Trombosit', satuan:'/µL', rujukan:'150.000–450.000'},
-  {id:'p6', kategori:'Gula Darah', nama:'Glukosa Sewaktu', satuan:'mg/dL', rujukan:'< 200'},
-  {id:'p7', kategori:'Profil Lipid', nama:'Kolesterol Total', satuan:'mg/dL', rujukan:'< 200'},
-  {id:'p8', kategori:'Profil Lipid', nama:'Trigliserida', satuan:'mg/dL', rujukan:'< 150'},
-  {id:'p9', kategori:'Faal Ginjal', nama:'Asam Urat', satuan:'mg/dL', rujukan:'3.5–7.2 (L) / 2.6–6.0 (P)'},
-  {id:'p12', kategori:'Faal Ginjal', nama:'Ureum (BUN)', satuan:'mg/dL', rujukan:'10–50'},
-  {id:'p13', kategori:'Faal Ginjal', nama:'Kreatinin', satuan:'mg/dL', rujukan:'0.6–1.3'},
-  {id:'p10', kategori:'Faal Hati', nama:'SGOT', satuan:'U/L', rujukan:'< 37'},
-  {id:'p11', kategori:'Faal Hati', nama:'SGPT', satuan:'U/L', rujukan:'< 41'},
-  {id:'p14', kategori:'Faal Hati', nama:'Bilirubin Total', satuan:'mg/dL', rujukan:'0.3–1.2'},
-  {id:'p15', kategori:'Faal Hati', nama:'Protein Total', satuan:'g/dL', rujukan:'6.4–8.3'},
-  {id:'p16', kategori:'Faal Hati', nama:'Albumin', satuan:'g/dL', rujukan:'3.5–5.0'},
+  {id:'p1', kategoriUtama:'', kategori:'Hematologi', nama:'Hemoglobin (Hb)', satuan:'g/dL', rujukan:'13.0–17.0 (L) / 12.0–15.0 (P)'},
+  {id:'p2', kategoriUtama:'', kategori:'Hematologi', nama:'Leukosit', satuan:'/µL', rujukan:'4.000–10.000'},
+  {id:'p3', kategoriUtama:'', kategori:'Hematologi', nama:'Eritrosit', satuan:'juta/µL', rujukan:'4.5–5.5'},
+  {id:'p4', kategoriUtama:'', kategori:'Hematologi', nama:'Hematokrit', satuan:'%', rujukan:'37–48'},
+  {id:'p5', kategoriUtama:'', kategori:'Hematologi', nama:'Trombosit', satuan:'/µL', rujukan:'150.000–450.000'},
+  {id:'p6', kategoriUtama:'Kimia Klinik', kategori:'Gula Darah', nama:'Glukosa Puasa', satuan:'mg/dL', rujukan:'70–100'},
+  {id:'p6b', kategoriUtama:'Kimia Klinik', kategori:'Gula Darah', nama:'Glukosa 2JPP', satuan:'mg/dL', rujukan:'< 140'},
+  {id:'p6c', kategoriUtama:'Kimia Klinik', kategori:'Gula Darah', nama:'Gula darah Sewaktu', satuan:'mg/dL', rujukan:'< 200'},
+  {id:'p18', kategoriUtama:'Kimia Klinik', kategori:'Gula Darah', nama:'HbA1c', satuan:'%', rujukan:'< 5.7'},
+  {id:'p13', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'Creatinin', satuan:'mg/dL', rujukan:'0.6–1.3'},
+  {id:'p12', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'Urea-N (BUN)', satuan:'mg/dL', rujukan:'10–50'},
+  {id:'p12b', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'Ureum', satuan:'mg/dL', rujukan:'10–50'},
+  {id:'p9', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'Asam Urat', satuan:'mg/dL', rujukan:'3.5–7.2 (L) / 2.6–6.0 (P)'},
+  {id:'p9b', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'Creatinine Clearance', satuan:'mL/menit', rujukan:'-'},
+  {id:'p9c', kategoriUtama:'Kimia Klinik', kategori:'Faal Ginjal', nama:'eGFR', satuan:'mL/menit/1.73m²', rujukan:'≥ 90'},
+  {id:'p7', kategoriUtama:'Kimia Klinik', kategori:'Lemak', nama:'Cholesterol Total', satuan:'mg/dL', rujukan:'< 200'},
+  {id:'p8', kategoriUtama:'Kimia Klinik', kategori:'Lemak', nama:'Trigliserida', satuan:'mg/dL', rujukan:'< 150'},
+  {id:'p8b', kategoriUtama:'Kimia Klinik', kategori:'Lemak', nama:'HDL Cholesterol', satuan:'mg/dL', rujukan:'> 40'},
+  {id:'p8c', kategoriUtama:'Kimia Klinik', kategori:'Lemak', nama:'LDL Cholesterol', satuan:'mg/dL', rujukan:'< 100'},
+  {id:'p8d', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Natrium', satuan:'mmol/L', rujukan:'135–145'},
+  {id:'p8e', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Kalium', satuan:'mmol/L', rujukan:'3.5–5.0'},
+  {id:'p8f', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Chlorida', satuan:'mmol/L', rujukan:'98–107'},
+  {id:'p8g', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Kalsium', satuan:'mg/dL', rujukan:'8.5–10.5'},
+  {id:'p8h', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Phospor', satuan:'mg/dL', rujukan:'2.5–4.5'},
+  {id:'p8i', kategoriUtama:'Kimia Klinik', kategori:'Elektrolit', nama:'Magnesium', satuan:'mg/dL', rujukan:'1.7–2.2'},
+  {id:'p10', kategoriUtama:'Kimia Klinik', kategori:'Faal Hati', nama:'SGOT', satuan:'U/L', rujukan:'< 37'},
+  {id:'p11', kategoriUtama:'Kimia Klinik', kategori:'Faal Hati', nama:'SGPT', satuan:'U/L', rujukan:'< 41'},
+  {id:'p16', kategoriUtama:'Kimia Klinik', kategori:'Faal Hati', nama:'Albumin', satuan:'g/dL', rujukan:'3.5–5.0'},
+  {id:'p14', kategoriUtama:'Kimia Klinik', kategori:'Faal Hati', nama:'Bilirubin Total', satuan:'mg/dL', rujukan:'0.3–1.2'},
+  {id:'p14b', kategoriUtama:'Kimia Klinik', kategori:'Faal Hati', nama:'Bilirubin Direct', satuan:'mg/dL', rujukan:'0.0–0.3'},
+  {id:'p19', kategoriUtama:'', kategori:'Imunoserologi', nama:'HBsAg', satuan:'Rapid', rujukan:'Non Reaktif'},
+  {id:'p20', kategoriUtama:'', kategori:'Imunoserologi', nama:'Anti HIV', satuan:'Rapid', rujukan:'Non Reaktif'},
+  {id:'p21', kategoriUtama:'', kategori:'Imunoserologi', nama:'Widal Typhi O', satuan:'Titer', rujukan:'Negatif'},
+  {id:'p22', kategoriUtama:'', kategori:'Mikrobiologi', nama:'BTA Sputum', satuan:'Mikroskopis', rujukan:'Negatif'},
 ];
 const DEFAULT_USERS = {
   admin:   {password:'admin123',   role:'admin',   nama:'Administrator'},
@@ -684,7 +824,7 @@ const DEFAULT_SETTINGS = {
   email:'dinkes.labkesda@surabaya.go.id',
   kota:'Surabaya',
   pemeriksaList: ['Ajeng Prameswari, A.Md.AK', 'Agita Fortuna Septa N., A.Md.Kes'],
-  dokterList: ['dr. Fara Nayo F., M.Ked.Klin., Sp.MK']
+  dokterList: [{nama:'dr. Fara Nayo F., M.Ked.Klin., Sp.MK', nip:''}]
 };
 
 /* =========================================================================
@@ -764,11 +904,12 @@ const VIEW_META = {
   riwayat:{title:'Riwayat Pemeriksaan', sub:'Seluruh riwayat pemeriksaan pasien terkait'},
   parameter:{title:'Kelola Parameter', sub:'Pengaturan parameter pemeriksaan laboratorium'},
   pengguna:{title:'Kelola Pengguna', sub:'Pengaturan akun dan hak akses'},
+  biaya:{title:'Perhitungan Biaya', sub:'Rekap biaya pemeriksaan harian, bulanan, dan tahunan'},
   pengaturan:{title:'Pengaturan Umum', sub:'Identitas instansi untuk kop hasil cetak'},
   backup:{title:'Backup & Restore', sub:'Cadangkan atau pulihkan seluruh data'}
 };
 function goView(name){
-  if((name==='parameter'||name==='pengguna'||name==='pengaturan'||name==='backup') && CURRENT_USER.role!=='admin'){
+  if((name==='parameter'||name==='pengguna'||name==='pengaturan'||name==='backup'||name==='biaya') && CURRENT_USER.role!=='admin'){
     toast('Halaman ini khusus Administrator.', 'err'); return;
   }
   document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
@@ -782,6 +923,7 @@ function goView(name){
   if(name==='cari') renderSearchResults();
   if(name==='parameter') renderParamAdmin();
   if(name==='pengguna') renderUserAdmin();
+  if(name==='biaya') renderBiayaView();
   if(name==='pengaturan') renderPengaturanForm();
   if(name==='form' && !EDITING_ID) renderParamTable();
   if(name==='form') renderDatalists();
@@ -820,6 +962,22 @@ function groupInOrder(items, keyFn){
   });
   return groups;
 }
+// Sama seperti groupInOrder, tapi dua tingkat: kategori utama (mis. "Kimia Klinik")
+// membungkus beberapa sub-kategori (mis. "Gula Darah", "Faal Ginjal"), dan urutan
+// baik kategori utama maupun sub-kategori mengikuti urutan kemunculan pertama pada
+// daftar parameter (yaitu urutan di menu Kelola Parameter).
+function groupTwoLevel(items, mainKeyFn, subKeyFn){
+  const mains = []; const mainMap = new Map();
+  items.forEach(it=>{
+    const mk = (mainKeyFn(it)||'').trim();
+    if(!mainMap.has(mk)){ const g = {key:mk, subgroups:[], subMap:new Map()}; mainMap.set(mk,g); mains.push(g); }
+    const g = mainMap.get(mk);
+    const sk = (subKeyFn(it)||'').trim();
+    if(!g.subMap.has(sk)){ const sg = {key:sk, items:[]}; g.subMap.set(sk,sg); g.subgroups.push(sg); }
+    g.subMap.get(sk).items.push(it);
+  });
+  return mains.map(g=>({key:g.key, subgroups:g.subgroups}));
+}
 function fmtDate(iso){
   if(!iso) return '-';
   const d = new Date(iso+'T00:00:00');
@@ -837,28 +995,35 @@ function renderParamTable(){
   tbody.innerHTML = '';
   let checkedCount = 0;
   const filtered = PARAMS.filter(p => p.nama.toLowerCase().includes(filter));
-  const groups = groupInOrder(filtered, p=>p.kategori);
-  groups.forEach(group=>{
-    if(group.key){
-      const gtr = document.createElement('tr');
-      gtr.innerHTML = `<td colspan="6" class="param-group-row">${escapeHtml(group.key)}</td>`;
-      tbody.appendChild(gtr);
+  const mainGroups = groupTwoLevel(filtered, p=>p.kategoriUtama, p=>p.kategori);
+  mainGroups.forEach(mg=>{
+    if(mg.key){
+      const mtr = document.createElement('tr');
+      mtr.innerHTML = `<td colspan="6" class="param-group-row param-group-main">${escapeHtml(mg.key)}</td>`;
+      tbody.appendChild(mtr);
     }
-    group.items.forEach(p=>{
-      const existing = CURRENT_FORM_PARAMS[p.id];
-      const isChecked = !!existing?.dipilih;
-      if(isChecked) checkedCount++;
-      const tr = document.createElement('tr');
-      tr.className = isChecked ? 'checked' : 'dim';
-      tr.innerHTML = `
-        <td><input type="checkbox" class="chk" ${isChecked?'checked':''} onchange="toggleParam('${p.id}', this.checked)"></td>
-        <td class="pname">${escapeHtml(p.nama)}</td>
-        <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.hasil||'')}" oninput="setParamField('${p.id}','hasil',this.value)" placeholder="Hasil"></td>
-        <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.satuan ?? p.satuan)}" oninput="setParamField('${p.id}','satuan',this.value)"></td>
-        <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.rujukan ?? p.rujukan)}" oninput="setParamField('${p.id}','rujukan',this.value)"></td>
-        <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.keterangan||'')}" oninput="setParamField('${p.id}','keterangan',this.value)" placeholder="Opsional"></td>
-      `;
-      tbody.appendChild(tr);
+    mg.subgroups.forEach(group=>{
+      if(group.key){
+        const gtr = document.createElement('tr');
+        gtr.innerHTML = `<td colspan="6" class="param-group-row${mg.key?' param-group-sub':''}">${escapeHtml(group.key)}</td>`;
+        tbody.appendChild(gtr);
+      }
+      group.items.forEach(p=>{
+        const existing = CURRENT_FORM_PARAMS[p.id];
+        const isChecked = !!existing?.dipilih;
+        if(isChecked) checkedCount++;
+        const tr = document.createElement('tr');
+        tr.className = isChecked ? 'checked' : 'dim';
+        tr.innerHTML = `
+          <td><input type="checkbox" class="chk" ${isChecked?'checked':''} onchange="toggleParam('${p.id}', this.checked)"></td>
+          <td class="pname">${escapeHtml(p.nama)}</td>
+          <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.hasil||'')}" oninput="setParamField('${p.id}','hasil',this.value)" placeholder="Hasil"></td>
+          <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.satuan ?? p.satuan)}" oninput="setParamField('${p.id}','satuan',this.value)"></td>
+          <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.rujukan ?? p.rujukan)}" oninput="setParamField('${p.id}','rujukan',this.value)"></td>
+          <td><input type="text" ${isChecked?'':'disabled'} value="${escapeHtml(existing?.keterangan||'')}" oninput="setParamField('${p.id}','keterangan',this.value)" placeholder="Opsional"></td>
+        `;
+        tbody.appendChild(tr);
+      });
     });
   });
   document.getElementById('paramCount').textContent = checkedCount + ' dipilih';
@@ -866,7 +1031,7 @@ function renderParamTable(){
 let CURRENT_FORM_PARAMS = {}; // {paramId: {dipilih, hasil, satuan, rujukan, keterangan, nama}}
 function toggleParam(id, checked){
   const meta = PARAMS.find(p=>p.id===id);
-  if(!CURRENT_FORM_PARAMS[id]) CURRENT_FORM_PARAMS[id] = {dipilih:false, hasil:'', satuan:meta.satuan, rujukan:meta.rujukan, keterangan:'', nama:meta.nama, kategori:meta.kategori};
+  if(!CURRENT_FORM_PARAMS[id]) CURRENT_FORM_PARAMS[id] = {dipilih:false, hasil:'', satuan:meta.satuan, rujukan:meta.rujukan, keterangan:'', nama:meta.nama, kategori:meta.kategori, kategoriUtama:meta.kategoriUtama, harga:meta.harga};
   CURRENT_FORM_PARAMS[id].dipilih = checked;
   markDirty();
   renderParamTable();
@@ -895,6 +1060,7 @@ function formBaru(discardDraft){
   document.getElementById('pTglHasil').value = '';
   document.getElementById('pDokterPJ').value = '';
   document.getElementById('pNip').value = '';
+  document.getElementById('pUseTtd').checked = false;
   document.getElementById('paramFilter').value='';
   document.getElementById('btnHapus').disabled = true;
   document.getElementById('btnCetak').disabled = true;
@@ -934,10 +1100,11 @@ function collectFormData(){
     tglHasil: document.getElementById('pTglHasil').value,
     dokterPJ: document.getElementById('pDokterPJ').value.trim(),
     nip: document.getElementById('pNip').value.trim(),
+    useTtd: document.getElementById('pUseTtd').checked,
     params: Object.entries(CURRENT_FORM_PARAMS).filter(([id,v])=>v.dipilih)
       .map(([id,v])=>{
         const master = PARAMS.find(p=>p.id===id);
-        return {id, nama:v.nama, hasil:v.hasil, satuan:v.satuan, rujukan:v.rujukan, keterangan:v.keterangan, kategori: (v.kategori ?? master?.kategori ?? '')};
+        return {id, nama:v.nama, hasil:v.hasil, satuan:v.satuan, rujukan:v.rujukan, keterangan:v.keterangan, kategori: (v.kategori ?? master?.kategori ?? ''), kategoriUtama: (v.kategoriUtama ?? master?.kategoriUtama ?? ''), harga: Number(v.harga ?? master?.harga ?? 0)||0};
       })
       .sort((a,b)=> PARAMS.findIndex(p=>p.id===a.id) - PARAMS.findIndex(p=>p.id===b.id))
   };
@@ -990,8 +1157,9 @@ function loadRecordToForm(rec){
   document.getElementById('pTglHasil').value = rec.tglHasil||'';
   document.getElementById('pDokterPJ').value = rec.dokterPJ||'';
   document.getElementById('pNip').value = rec.nip||'';
+  document.getElementById('pUseTtd').checked = !!rec.useTtd;
   CURRENT_FORM_PARAMS = {};
-  (rec.params||[]).forEach(p=>{ CURRENT_FORM_PARAMS[p.id] = {dipilih:true, hasil:p.hasil, satuan:p.satuan, rujukan:p.rujukan, keterangan:p.keterangan, nama:p.nama, kategori:p.kategori}; });
+  (rec.params||[]).forEach(p=>{ CURRENT_FORM_PARAMS[p.id] = {dipilih:true, hasil:p.hasil, satuan:p.satuan, rujukan:p.rujukan, keterangan:p.keterangan, nama:p.nama, kategori:p.kategori, kategoriUtama:p.kategoriUtama, harga:p.harga}; });
   document.getElementById('paramFilter').value='';
   renderParamTable();
   document.getElementById('btnHapus').disabled = false;
@@ -1045,9 +1213,10 @@ async function checkDraft(){
       document.getElementById('pTglHasil').value = draft.tglHasil||'';
       document.getElementById('pDokterPJ').value = draft.dokterPJ||'';
       document.getElementById('pNip').value = draft.nip||'';
+      document.getElementById('pUseTtd').checked = !!draft.useTtd;
       EDITING_ID = draft.editingId || null;
       CURRENT_FORM_PARAMS = {};
-      (draft.params||[]).forEach(p=>{ CURRENT_FORM_PARAMS[p.id] = {dipilih:true, hasil:p.hasil, satuan:p.satuan, rujukan:p.rujukan, keterangan:p.keterangan, nama:p.nama, kategori:p.kategori}; });
+      (draft.params||[]).forEach(p=>{ CURRENT_FORM_PARAMS[p.id] = {dipilih:true, hasil:p.hasil, satuan:p.satuan, rujukan:p.rujukan, keterangan:p.keterangan, nama:p.nama, kategori:p.kategori, kategoriUtama:p.kategoriUtama, harga:p.harga}; });
       renderParamTable();
       goView('form');
     }, 'Lanjutkan Draf', 'btn-primary', async ()=>{
@@ -1129,15 +1298,20 @@ function drawParamAdmin(){
   wrap.innerHTML = PARAM_DRAFT.map((p,i)=>`
     <div class="padmin-row">
       <input type="text" value="${escapeHtml(p.nama)}" oninput="PARAM_DRAFT[${i}].nama=this.value" placeholder="Nama parameter">
-      <input type="text" value="${escapeHtml(p.kategori||'')}" oninput="PARAM_DRAFT[${i}].kategori=this.value" placeholder="cth. Hematologi" list="dlKategori">
+      <input type="text" value="${escapeHtml(p.kategoriUtama||'')}" oninput="PARAM_DRAFT[${i}].kategoriUtama=this.value" placeholder="cth. Kimia Klinik" list="dlKategoriUtama">
+      <input type="text" value="${escapeHtml(p.kategori||'')}" oninput="PARAM_DRAFT[${i}].kategori=this.value" placeholder="cth. Gula Darah" list="dlKategori">
       <input type="text" value="${escapeHtml(p.satuan)}" oninput="PARAM_DRAFT[${i}].satuan=this.value" placeholder="Satuan">
       <input type="text" value="${escapeHtml(p.rujukan)}" oninput="PARAM_DRAFT[${i}].rujukan=this.value" placeholder="Nilai rujukan">
+      <input type="number" min="0" step="500" value="${p.harga||0}" oninput="PARAM_DRAFT[${i}].harga=Number(this.value)||0" placeholder="0">
       <div style="display:flex;gap:4px;">
         <button class="btn btn-sm btn-outline" title="Pindah ke atas" onclick="pindahParameterBaris(${i},-1)" ${i===0?'disabled':''}>↑</button>
         <button class="btn btn-sm btn-outline" title="Pindah ke bawah" onclick="pindahParameterBaris(${i},1)" ${i===PARAM_DRAFT.length-1?'disabled':''}>↓</button>
         <button class="btn btn-sm btn-danger" onclick="hapusParameterBaris(${i})">Hapus</button>
       </div>
     </div>`).join('');
+  const katUtamaSet = [...new Set(PARAM_DRAFT.map(p=>p.kategoriUtama).filter(Boolean))];
+  const dlU = document.getElementById('dlKategoriUtama');
+  if(dlU) dlU.innerHTML = katUtamaSet.map(k=>`<option value="${escapeHtml(k)}">`).join('');
   const katSet = [...new Set(PARAM_DRAFT.map(p=>p.kategori).filter(Boolean))];
   const dl = document.getElementById('dlKategori');
   if(dl) dl.innerHTML = katSet.map(k=>`<option value="${escapeHtml(k)}">`).join('');
@@ -1149,7 +1323,7 @@ function pindahParameterBaris(i, dir){
   drawParamAdmin();
 }
 function tambahParameterBaris(){
-  PARAM_DRAFT.push({id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), nama:'', kategori:'', satuan:'', rujukan:''});
+  PARAM_DRAFT.push({id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), nama:'', kategoriUtama:'', kategori:'', satuan:'', rujukan:'', harga:0});
   drawParamAdmin();
 }
 function hapusParameterBaris(i){ PARAM_DRAFT.splice(i,1); drawParamAdmin(); }
@@ -1216,6 +1390,7 @@ async function simpanUser(){
 /* =========================================================================
    PENGATURAN UMUM
    ========================================================================= */
+let DOKTER_DRAFT = [];
 function renderPengaturanForm(){
   document.getElementById('setPemerintah').value = SETTINGS.pemerintah||'';
   document.getElementById('setDinas').value = SETTINGS.dinas||'';
@@ -1225,8 +1400,35 @@ function renderPengaturanForm(){
   document.getElementById('setEmail').value = SETTINGS.email||'';
   document.getElementById('setKota').value = SETTINGS.kota||'';
   document.getElementById('setPemeriksaList').value = (SETTINGS.pemeriksaList||[]).join('\n');
-  document.getElementById('setDokterList').value = (SETTINGS.dokterList||[]).join('\n');
+  DOKTER_DRAFT = JSON.parse(JSON.stringify(SETTINGS.dokterList||[]));
+  drawDokterAdmin();
 }
+function drawDokterAdmin(){
+  const wrap = document.getElementById('dokterAdminList');
+  wrap.innerHTML = DOKTER_DRAFT.map((d,i)=>`
+    <div class="dokter-admin-row">
+      <input type="text" value="${escapeHtml(d.nama||'')}" oninput="DOKTER_DRAFT[${i}].nama=this.value" placeholder="cth. dr. Fara Nayo F., M.Ked.Klin., Sp.MK">
+      <input type="text" value="${escapeHtml(d.nip||'')}" oninput="DOKTER_DRAFT[${i}].nip=this.value" placeholder="NIP">
+      <div class="ttd-cell">
+        ${d.ttd ? `<img src="${d.ttd}" class="ttd-thumb" alt="TTD">` : `<span class="ttd-empty">Belum ada TTD</span>`}
+        <label class="btn btn-sm btn-outline ttd-upload-btn">Unggah<input type="file" accept="image/*" style="display:none" onchange="unggahTtd(${i}, this)"></label>
+        ${d.ttd ? `<button type="button" class="btn btn-sm btn-danger" onclick="hapusTtd(${i})">Hapus TTD</button>` : ''}
+      </div>
+      <button type="button" class="btn btn-sm btn-danger" onclick="hapusDokterBaris(${i})">Hapus</button>
+    </div>`).join('') || `<div class="hint" style="padding:10px 0;">Belum ada dokter. Klik "+ Tambah Dokter" di bawah.</div>`;
+}
+function tambahDokterBaris(){ DOKTER_DRAFT.push({nama:'', nip:'', ttd:''}); drawDokterAdmin(); }
+function hapusDokterBaris(i){ DOKTER_DRAFT.splice(i,1); drawDokterAdmin(); }
+function unggahTtd(i, inputEl){
+  const file = inputEl.files[0];
+  if(!file) return;
+  if(file.size > 500*1024){ toast('Ukuran gambar TTD maksimal 500KB.', 'err'); return; }
+  const reader = new FileReader();
+  reader.onload = ()=>{ DOKTER_DRAFT[i].ttd = reader.result; drawDokterAdmin(); };
+  reader.onerror = ()=>{ toast('Gagal membaca berkas gambar.', 'err'); };
+  reader.readAsDataURL(file);
+}
+function hapusTtd(i){ DOKTER_DRAFT[i].ttd = ''; drawDokterAdmin(); }
 async function simpanPengaturan(){
   SETTINGS = {
     pemerintah: document.getElementById('setPemerintah').value.trim(),
@@ -1237,17 +1439,57 @@ async function simpanPengaturan(){
     email: document.getElementById('setEmail').value.trim(),
     kota: document.getElementById('setKota').value.trim(),
     pemeriksaList: document.getElementById('setPemeriksaList').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    dokterList: document.getElementById('setDokterList').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    dokterList: DOKTER_DRAFT.filter(d=>(d.nama||'').trim()).map(d=>({nama:d.nama.trim(), nip:(d.nip||'').trim(), ttd:d.ttd||''})),
   };
   await sSet(KEYS.SETTINGS, SETTINGS);
   renderDatalists();
   toast('Pengaturan berhasil disimpan.', 'ok');
 }
 function renderDatalists(){
-  const dlP = document.getElementById('dlPemeriksa');
   const dlD = document.getElementById('dlDokter');
-  if(dlP) dlP.innerHTML = (SETTINGS.pemeriksaList||[]).map(n=>`<option value="${escapeHtml(n)}">`).join('');
-  if(dlD) dlD.innerHTML = (SETTINGS.dokterList||[]).map(n=>`<option value="${escapeHtml(n)}">`).join('');
+  if(dlD) dlD.innerHTML = (SETTINGS.dokterList||[]).map(d=>`<option value="${escapeHtml(d.nama)}">`).join('');
+}
+/* ---- Panel pilih banyak nama pemeriksa ---- */
+function toggleMsPanel(){
+  const panel = document.getElementById('msPemeriksaPanel');
+  if(panel.classList.contains('hidden')){
+    renderMsPanel();
+    panel.classList.remove('hidden');
+  }else{
+    panel.classList.add('hidden');
+  }
+}
+function renderMsPanel(){
+  const panel = document.getElementById('msPemeriksaPanel');
+  const list = SETTINGS.pemeriksaList||[];
+  const current = document.getElementById('pPemeriksa').value.split(';').map(s=>s.trim()).filter(Boolean);
+  panel.innerHTML = list.length ? list.map(n=>`
+    <label class="ms-item"><input type="checkbox" ${current.includes(n)?'checked':''} onchange="toggleMsItem(this)" data-name="${escapeHtml(n)}"> ${escapeHtml(n)}</label>
+  `).join('') : `<div class="ms-empty">Belum ada nama tersimpan. Tambahkan lewat Pengaturan Umum → Daftar Nama Pemeriksa.</div>`;
+}
+function toggleMsItem(checkboxEl){
+  const name = checkboxEl.dataset.name;
+  const inp = document.getElementById('pPemeriksa');
+  let list = inp.value.split(';').map(s=>s.trim()).filter(Boolean);
+  if(checkboxEl.checked){ if(!list.includes(name)) list.push(name); }
+  else{ list = list.filter(n=>n!==name); }
+  inp.value = list.join('; ');
+  markDirty();
+}
+document.addEventListener('click', (e)=>{
+  const panel = document.getElementById('msPemeriksaPanel');
+  const wrap = document.getElementById('msPemeriksaWrap');
+  if(panel && !panel.classList.contains('hidden') && wrap && !wrap.contains(e.target)){
+    panel.classList.add('hidden');
+  }
+});
+function isiOtomatisNip(){
+  const nama = document.getElementById('pDokterPJ').value.trim();
+  const match = (SETTINGS.dokterList||[]).find(d=>d.nama===nama);
+  if(match){
+    document.getElementById('pNip').value = match.nip||'';
+    markDirty();
+  }
 }
 
 /* =========================================================================
@@ -1286,27 +1528,85 @@ function restoreData(){
 }
 
 /* =========================================================================
+   PERHITUNGAN BIAYA PEMERIKSAAN
+   ========================================================================= */
+function formatRupiah(n){
+  return 'Rp ' + (Math.round(Number(n)||0)).toLocaleString('id-ID');
+}
+// Total biaya satu Nomor Lab = jumlah harga tiap parameter yang dipilih pada
+// pemeriksaan tersebut (harga diambil dari snapshot saat pemeriksaan disimpan,
+// bukan harga parameter saat ini — supaya rekap lama tidak berubah bila harga
+// parameter kemudian diedit).
+function hitungBiayaRecord(rec){
+  return (rec.params||[]).reduce((sum,p)=> sum + (Number(p.harga)||0), 0);
+}
+function renderBiayaView(){
+  const today = todayISO();
+  const ym = today.slice(0,7);
+  const y = today.slice(0,4);
+  const totalUntuk = (pred)=> RECORDS.filter(pred).reduce((s,r)=>s+hitungBiayaRecord(r),0);
+  document.getElementById('biayaHariIni').textContent = formatRupiah(totalUntuk(r=>(r.tglPeriksa||'')===today));
+  document.getElementById('biayaBulanIni').textContent = formatRupiah(totalUntuk(r=>(r.tglPeriksa||'').slice(0,7)===ym));
+  document.getElementById('biayaTahunIni').textContent = formatRupiah(totalUntuk(r=>(r.tglPeriksa||'').slice(0,4)===y));
+  const dariEl = document.getElementById('biayaDari');
+  const sampaiEl = document.getElementById('biayaSampai');
+  if(!dariEl.value) dariEl.value = ym + '-01';
+  if(!sampaiEl.value) sampaiEl.value = today;
+  renderBiayaRekap();
+}
+function renderBiayaRekap(){
+  const dari = document.getElementById('biayaDari').value;
+  const sampai = document.getElementById('biayaSampai').value;
+  const filtered = RECORDS.filter(r=>{
+    const t = r.tglPeriksa||'';
+    return (!dari || t>=dari) && (!sampai || t<=sampai);
+  }).sort((a,b)=> (b.tglPeriksa||'').localeCompare(a.tglPeriksa||''));
+  const total = filtered.reduce((s,r)=>s+hitungBiayaRecord(r),0);
+  document.getElementById('biayaPeriodeTotal').textContent = formatRupiah(total);
+  document.getElementById('biayaPeriodeJumlah').textContent = filtered.length;
+  const tbody = document.getElementById('biayaTbody');
+  tbody.innerHTML = filtered.length ? filtered.map(r=>`
+    <tr>
+      <td class="pname">${escapeHtml(r.nomorLab)}</td>
+      <td>${escapeHtml(r.nama||'-')}</td>
+      <td>${fmtDate(r.tglPeriksa)}</td>
+      <td>${(r.params||[]).length}</td>
+      <td style="text-align:right;font-weight:700;">${formatRupiah(hitungBiayaRecord(r))}</td>
+    </tr>`).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--ink-faint);padding:20px;">Belum ada Nomor Lab pada periode ini.</td></tr>`;
+}
+
+/* =========================================================================
    CETAK / EXPORT PDF
    ========================================================================= */
 function buildDocHtml(){
   const data = collectFormData();
-  const groups = groupInOrder(data.params, p=>p.kategori);
-  const rows = groups.map(group=>{
-    const headerRow = group.key ? `<tr><td colspan="4" class="doc-group">${escapeHtml(group.key)}</td></tr>` : '';
-    const itemRows = group.items.map(p=>{
-      const hasilTxt = escapeHtml(p.hasil||'-') + (p.keterangan ? ' <i>('+escapeHtml(p.keterangan)+')</i>' : '');
-      return `
-      <tr>
-        <td>${escapeHtml(p.nama)}</td>
-        <td class="unit">${escapeHtml(p.satuan||'')}</td>
-        <td class="res">${hasilTxt}</td>
-        <td>${escapeHtml(p.rujukan||'-')}</td>
-      </tr>`;
+  const mainGroups = groupTwoLevel(data.params, p=>p.kategoriUtama, p=>p.kategori);
+  const rows = mainGroups.map(mg=>{
+    const mainHeaderRow = mg.key ? `<tr><td colspan="4" class="doc-group doc-group-main">${escapeHtml(mg.key)}</td></tr>` : '';
+    const subRows = mg.subgroups.map(group=>{
+      const headerRow = group.key ? `<tr><td colspan="4" class="doc-group${mg.key?' doc-group-sub':''}">${escapeHtml(group.key)}</td></tr>` : '';
+      const itemRows = group.items.map(p=>{
+        const hasilTxt = escapeHtml(p.hasil||'-') + (p.keterangan ? ' <i>('+escapeHtml(p.keterangan)+')</i>' : '');
+        return `
+        <tr>
+          <td>${escapeHtml(p.nama)}</td>
+          <td class="unit">${escapeHtml(p.satuan||'')}</td>
+          <td class="res">${hasilTxt}</td>
+          <td>${escapeHtml(p.rujukan||'-')}</td>
+        </tr>`;
+      }).join('');
+      return headerRow + itemRows;
     }).join('');
-    return headerRow + itemRows;
+    return mainHeaderRow + subRows;
   }).join('');
 
   const tglHasilFmt = data.tglHasil ? fmtDate(data.tglHasil) : fmtDate(todayISO());
+
+  const dokterMatch = (SETTINGS.dokterList||[]).find(d=>d.nama===data.dokterPJ);
+  const pakaiTtd = data.useTtd && dokterMatch && dokterMatch.ttd;
+  const signatureBlockHtml = pakaiTtd
+    ? `<img class="ttd-img" src="${dokterMatch.ttd}" alt="Tanda tangan digital">`
+    : `<div class="gap"></div>`;
 
   return `
     <div class="doc-head">
@@ -1342,18 +1642,18 @@ function buildDocHtml(){
       <div class="right">
         <div>${escapeHtml(SETTINGS.kota||'')}, ${tglHasilFmt}</div>
         <div>Dokter,</div>
-        <div class="gap"></div>
+        ${signatureBlockHtml}
         <div class="dname">${escapeHtml(data.dokterPJ||'')}</div>
         <div>${escapeHtml(data.nip||'')}</div>
       </div>
     </div>
 
-     <div class="doc-foot">
+    <div class="doc-foot">
   <span class="email-line">
     Email : ${escapeHtml(SETTINGS.email||'')}
   </span>
 </div>
-`;
+  `;
 }
 function validateBeforeOutput(){
   const data = collectFormData();
@@ -1368,35 +1668,15 @@ function cetakHasil(){
   document.getElementById('docContent').innerHTML = buildDocHtml();
   window.print();
 }
-async function exportPDF(){
+function exportPDF(){
   if(!validateBeforeOutput()) return;
-  const data = collectFormData();
+  // Dulu tombol ini memakai library screenshot (html2pdf/html2canvas) untuk membuat PDF,
+  // tapi hasilnya sering kacau/terpotong karena keterbatasan teknik "tangkap layar" itu.
+  // Sekarang memakai fitur cetak-ke-PDF bawaan browser (persis mesin yang dipakai tombol
+  // "Cetak Hasil (A4)"), sehingga hasilnya 100% sama rapinya dengan hasil cetak kertas.
   document.getElementById('docContent').innerHTML = buildDocHtml();
-  const appEl = document.getElementById('app');
-  const el = document.getElementById('printArea');
-  const prevAppDisplay = appEl.style.display;
-  // Sembunyikan seluruh tampilan aplikasi supaya tidak ikut mengganggu hasil tangkapan gambar
-  appEl.style.display = 'none';
-  el.style.display = 'block';
-  // Beri jeda 2 frame agar browser selesai menata ulang layout & memuat logo sebelum ditangkap
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  const opt = {
-    margin: 0,
-    filename: `Hasil-${data.nomorLab}.pdf`,
-    image: {type:'jpeg', quality:0.98},
-    html2canvas: {scale:2, useCORS:true, backgroundColor:'#ffffff', windowWidth: el.scrollWidth || undefined},
-    jsPDF: {unit:'mm', format:'a4', orientation:'portrait'},
-    pagebreak: {mode:['css','legacy']}
-  };
-  toast('Menyiapkan berkas PDF…', 'ok');
-  try{
-    await html2pdf().set(opt).from(el).save();
-  }catch(err){
-    toast('Gagal membuat PDF. Coba tombol "Cetak Hasil (A4)" lalu pilih tujuan "Simpan sebagai PDF" pada dialog cetak.', 'err');
-  }finally{
-    appEl.style.display = prevAppDisplay || '';
-    el.style.display = 'none';
-  }
+  toast('Pada jendela cetak yang muncul, pilih tujuan printer "Save as PDF" / "Simpan sebagai PDF" untuk mengunduhnya.', 'ok');
+  setTimeout(()=> window.print(), 300);
 }
 
 /* =========================================================================
