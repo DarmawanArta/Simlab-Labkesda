@@ -280,6 +280,7 @@
 
   /* ---------- Print area (hidden on screen) ---------- */
   #printArea{display:none;}
+  #invoicePrintArea{display:none;}
   /* Dipakai sesaat saat membuat PDF gabungan (html2canvas perlu elemen benar-benar ter-render,
      jadi ditaruh di luar layar, bukan display:none, supaya tidak terlihat berkedip oleh pengguna) */
   #printArea.force-visible{display:block !important;position:fixed;left:-10000px;top:0;z-index:-1;}
@@ -301,8 +302,37 @@
     #printArea{display:block !important;}
     html, body{margin:0;padding:0;background:#fff;}
     @page{size:A4;margin:0;}
+    body.printing-invoice #printArea{display:none !important;}
+    body.printing-invoice #invoicePrintArea{display:block !important;}
   }
   #printArea{width:210mm;margin:0 auto;padding:14mm 16mm;box-sizing:border-box;background:#fff;}
+
+  /* ---------- Invoice Loket (A4 landscape, 2 lembar identik: Pasien & Arsip) ---------- */
+  #invoicePrintArea{width:297mm;height:210mm;box-sizing:border-box;background:#fff;}
+  .inv-page{display:flex;width:297mm;height:210mm;box-sizing:border-box;}
+  .inv-half{width:50%;height:210mm;box-sizing:border-box;padding:8mm 9mm;font-family:Arial,'Helvetica Neue',sans-serif;color:#000;font-size:9.5pt;display:flex;flex-direction:column;position:relative;}
+  .inv-half + .inv-half{border-left:1px dashed #888;}
+  .inv-cut-label{position:absolute;top:50%;left:-9px;transform:translateY(-50%) rotate(-90deg);font-size:7pt;color:#888;letter-spacing:.08em;white-space:nowrap;}
+  .inv-copy-label{text-align:center;font-weight:700;font-size:9pt;letter-spacing:.05em;background:#EDEFEE;padding:3px;margin-bottom:6px;}
+  .inv-head{text-align:center;margin-bottom:4px;}
+  .inv-head b{display:block;font-size:11pt;}
+  .inv-head span{display:block;font-size:8pt;color:#333;}
+  .inv-title{text-align:center;font-weight:700;font-size:10.5pt;text-decoration:underline;margin:6px 0 8px;}
+  .inv-meta{width:100%;font-size:9pt;margin-bottom:8px;}
+  .inv-meta td{padding:1.5px 0;vertical-align:top;}
+  .inv-meta td.k{width:32%;}
+  .inv-meta td.c{width:8px;}
+  .inv-items{width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6px;}
+  .inv-items th, .inv-items td{border:1px solid #000;padding:3px 5px;}
+  .inv-items th{background:#EDEFEE;font-weight:700;text-align:center;}
+  .inv-items td.num{text-align:center;}
+  .inv-items td.rp{text-align:right;}
+  .inv-items tfoot td{font-weight:700;}
+  .inv-terbilang{font-size:8.5pt;font-style:italic;margin-bottom:8px;}
+  .inv-sign{margin-top:auto;display:flex;justify-content:space-between;font-size:9pt;text-align:center;}
+  .inv-sign .box{width:45%;}
+  .inv-sign .gap{height:44px;}
+  .inv-foot-note{font-size:7.5pt;color:#666;text-align:center;margin-top:4px;}
   .doc{font-family:Arial,'Helvetica Neue',sans-serif;color:#000;font-size:11pt;display:flex;flex-direction:column;min-height:269mm;}
   .doc-head{position:relative;text-align:center;padding-bottom:4px;margin-bottom:2px;}
   .doc-head .doc-logo{position:absolute;left:4px;top:2px;width:56px;height:auto;}
@@ -830,6 +860,7 @@
         <div class="form-actions">
           <button class="btn btn-primary" onclick="simpanRegistrasi()">Simpan Pendaftaran</button>
           <button class="btn btn-outline" onclick="lokFormBaru()">+ Pendaftaran Baru</button>
+          <button class="btn btn-outline" id="btnCetakInvoiceLok" disabled onclick="cetakInvoiceLoket(document.getElementById('lokId').value)">Cetak Invoice</button>
           <button class="btn btn-outline" onclick="hapusRegistrasi()" id="btnHapusLok" disabled>Hapus</button>
         </div>
       </div>
@@ -1038,6 +1069,9 @@
 <div id="printArea">
   <div class="doc" id="docContent"></div>
 </div>
+
+<!-- ===================== INVOICE PRINT TEMPLATE (A4 landscape, 2 lembar identik) ===================== -->
+<div id="invoicePrintArea"></div>
 
 <script>
 /* =========================================================================
@@ -2789,6 +2823,7 @@ function lokFormBaru(goto){
   document.getElementById('lokCatatan').value = '';
   document.getElementById('lokParamText').value = '';
   document.getElementById('btnHapusLok').disabled = true;
+  document.getElementById('btnCetakInvoiceLok').disabled = true;
   renderJenisGroups();
   if(goto!==false) goView('loket');
 }
@@ -2834,6 +2869,7 @@ async function simpanRegistrasi(){
   toast('Pendaftaran berhasil disimpan.', 'ok');
   logAudit('Simpan Pendaftaran Loket', `NIK ${data.nik} — ${data.nama}`);
   document.getElementById('btnHapusLok').disabled = false;
+  document.getElementById('btnCetakInvoiceLok').disabled = false;
   renderLoketList();
 }
 function openRegistrasi(id){
@@ -2868,6 +2904,7 @@ function openRegistrasi(id){
   const names = (rec.parameterIds||[]).map(id=>PARAMS.find(p=>p.id===id)?.nama).filter(Boolean);
   document.getElementById('lokParamText').value = names.join('; ');
   document.getElementById('btnHapusLok').disabled = false;
+  document.getElementById('btnCetakInvoiceLok').disabled = false;
   renderJenisGroups();
   goView('loket');
 }
@@ -2895,6 +2932,93 @@ function hapusRegistrasi(){
     renderLoketList();
   });
 }
+/* =========================================================================
+   INVOICE / KWITANSI LOKET — A4 landscape, dibagi 2 lembar identik
+   (kiri untuk Pasien, kanan untuk Arsip Laboratorium).
+   ========================================================================= */
+// Mengubah ukuran halaman cetak jadi A4 landscape sesaat (dipulihkan otomatis lewat
+// event 'afterprint') — supaya tidak mengganggu ukuran cetak Hasil (A4 potret) di menu lain.
+function setPrintLandscape(on){
+  let s = document.getElementById('pageSizeOverride');
+  if(!s){ s = document.createElement('style'); s.id = 'pageSizeOverride'; document.head.appendChild(s); }
+  s.textContent = on ? '@media print{ @page{ size:A4 landscape; margin:0; } }' : '';
+  document.body.classList.toggle('printing-invoice', on);
+}
+window.addEventListener('afterprint', ()=> setPrintLandscape(false));
+// Menyusun daftar item biaya (jenis pemeriksaan × jumlah sampel, + parameter individual bila ada)
+// beserta totalnya, dipakai bersama oleh invoice cetak dan (nanti) rekap biaya lain bila diperlukan.
+function hitungRincianBiayaRegistrasi(rec){
+  const items = [];
+  (rec.jenisPemeriksaan||[]).forEach(full=>{
+    const harga = (SETTINGS.jenisHarga||{})[full] || 0;
+    const jumlah = (rec.jenisJumlah||{})[full] || 1;
+    items.push({ nama:full, jumlah, harga, subtotal: harga*jumlah });
+  });
+  (rec.parameterIds||[]).forEach(id=>{
+    const p = PARAMS.find(x=>x.id===id);
+    if(p) items.push({ nama:p.nama, jumlah:1, harga:Number(p.harga)||0, subtotal:Number(p.harga)||0 });
+  });
+  const total = items.reduce((s,it)=>s+it.subtotal, 0);
+  return { items, total };
+}
+function buildInvoiceHalfHtml(rec, labelText){
+  const { items, total } = hitungRincianBiayaRegistrasi(rec);
+  const rows = items.length ? items.map(it=>`
+    <tr>
+      <td>${escapeHtml(it.nama)}</td>
+      <td class="num">${it.jumlah}</td>
+      <td class="rp">${formatRupiah(it.harga)}</td>
+      <td class="rp">${formatRupiah(it.subtotal)}</td>
+    </tr>`).join('') : `<tr><td colspan="4" style="text-align:center;color:#888;">Belum ada jenis pemeriksaan/parameter dipilih.</td></tr>`;
+  return `
+    <div class="inv-half">
+      <div class="inv-copy-label">${escapeHtml(labelText)}</div>
+      <div class="inv-head">
+        <b>${escapeHtml(SETTINGS.unit||SETTINGS.dinas||'')}</b>
+        <span>${escapeHtml(SETTINGS.alamat||'')}</span>
+        <span>Telp. ${escapeHtml(SETTINGS.telp||'')}</span>
+      </div>
+      <div class="inv-title">Kwitansi Pembayaran Pemeriksaan</div>
+      <table class="inv-meta">
+        <tr><td class="k">No. Kwitansi</td><td class="c">:</td><td>${escapeHtml(rec.noKwitansi||'-')}</td></tr>
+        <tr><td class="k">Tanggal</td><td class="c">:</td><td>${fmtDate((rec.createdAt||'').slice(0,10)) || '-'}</td></tr>
+        <tr><td class="k">Nama</td><td class="c">:</td><td>${escapeHtml(rec.nama||rec.pemilik||'-')}</td></tr>
+        ${rec.nik ? `<tr><td class="k">NIK</td><td class="c">:</td><td>${escapeHtml(rec.nik)}</td></tr>` : ''}
+        ${rec.pemilik ? `<tr><td class="k">Pemilik/Instansi</td><td class="c">:</td><td>${escapeHtml(rec.pemilik)}</td></tr>` : ''}
+      </table>
+      <table class="inv-items">
+        <thead><tr><th>Jenis Pemeriksaan / Parameter</th><th style="width:34px;">Jml</th><th style="width:70px;">Harga Satuan</th><th style="width:80px;">Subtotal</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr><td colspan="3" style="text-align:right;">TOTAL BAYAR</td><td class="rp">${formatRupiah(total)}</td></tr></tfoot>
+      </table>
+      <div class="inv-sign">
+        <div class="box">
+          <div>Penerima,</div>
+          <div class="gap"></div>
+          <div>(...........................)</div>
+        </div>
+        <div class="box">
+          <div>Petugas Loket,</div>
+          <div class="gap"></div>
+          <div>(...........................)</div>
+        </div>
+      </div>
+      <div class="inv-foot-note">Simpan kwitansi ini sebagai bukti pembayaran yang sah.</div>
+    </div>`;
+}
+function cetakInvoiceLoket(id){
+  const rec = REGISTRATIONS.find(r=>r.id===id);
+  if(!rec){ toast('Data pendaftaran tidak ditemukan.', 'err'); return; }
+  if((rec.jenisPemeriksaan||[]).length===0 && (rec.parameterIds||[]).length===0){
+    toast('Belum ada jenis pemeriksaan/parameter yang dipilih untuk pendaftaran ini.', 'err');
+    return;
+  }
+  const html = `<div class="inv-page">${buildInvoiceHalfHtml(rec,'LEMBAR UNTUK PASIEN')}${buildInvoiceHalfHtml(rec,'LEMBAR UNTUK ARSIP LABORATORIUM')}</div>`;
+  document.getElementById('invoicePrintArea').innerHTML = html;
+  setPrintLandscape(true);
+  setTimeout(()=> window.print(), 60);
+  logAudit('Cetak Invoice Loket', `NIK ${rec.nik||'-'} — ${rec.nama||rec.pemilik||'-'}`);
+}
 function renderLoketList(){
   const wrap = document.getElementById('lokList');
   if(!wrap) return;
@@ -2909,6 +3033,9 @@ function renderLoketList(){
       ? `<span class="role-badge role-analis" style="margin-left:6px;">Sudah Diproses</span>`
       : (r.siapDiproses ? `<span class="role-badge role-kepala" style="margin-left:6px;">Di Antrian Hasil</span>` : `<span class="role-badge role-admin_loket" style="margin-left:6px;">Belum Dibayar</span>`);
     let actions = `<button class="btn btn-sm btn-outline" onclick='openRegistrasi("${r.id}")'>Buka</button>`;
+    if((r.jenisPemeriksaan||[]).length>0 || (r.parameterIds||[]).length>0){
+      actions += `<button class="btn btn-sm btn-outline" onclick='cetakInvoiceLoket("${r.id}")'>Cetak Invoice</button>`;
+    }
     if(!r.processed){
       if(allowKirim && !r.siapDiproses){
         actions += `<button class="btn btn-sm btn-accent" onclick='kirimKeAntrianHasil("${r.id}")'>Sudah Bayar — Kirim ke Antrian Hasil</button>`;
