@@ -374,6 +374,24 @@
   .padmin-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;}
   .padmin-head{display:grid;grid-template-columns:1.3fr 0.9fr 0.9fr 1.2fr 0.8fr auto;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line-strong);}
   .jharga-row{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);}
+  /* ---------- Kelola Parameter: tab ala "sheet" (mis. tab bawah Excel/Google Sheets) ---------- */
+  .sheet-tabs{display:flex;gap:2px;margin-bottom:-1px;position:relative;z-index:1;}
+  .sheet-tab{display:flex;align-items:center;gap:7px;padding:10px 18px;border:1px solid var(--line-strong);border-bottom:none;border-radius:10px 10px 0 0;background:var(--bg);color:var(--ink-soft);font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font-display);}
+  .sheet-tab svg{width:15px;height:15px;flex:none;}
+  .sheet-tab.active{background:var(--surface);color:var(--primary-dark);box-shadow:0 -2px 8px rgba(0,0,0,.04);}
+  .sheet-tab:not(.active):hover{background:var(--primary-100);}
+  .sheet-tab-panel .card:first-child{border-top-left-radius:0;}
+  /* Toolbar pencarian & pilihan jumlah baris per halaman, di atas tabel Daftar Parameter */
+  .padmin-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .padmin-toolbar input[type="text"]{flex:1 1 260px;min-width:180px;}
+  .padmin-pagesize-label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap;}
+  .padmin-pagesize-label select{width:auto;padding:6px 10px;}
+  .padmin-pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);}
+  .padmin-pagination .info{font-size:12.5px;color:var(--ink-soft);}
+  .padmin-pagination .pages{display:flex;gap:4px;flex-wrap:wrap;}
+  .padmin-pagination .pages button{min-width:32px;padding:5px 9px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;}
+  .padmin-pagination .pages button.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .padmin-pagination .pages button:disabled{opacity:.4;cursor:not-allowed;}
   .jharga-row .jharga-nama{font-weight:600;font-size:13.5px;}
   .jharga-row .jharga-nama small{display:block;font-weight:400;color:var(--ink-faint);font-size:11px;}
   .jharga-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;text-align:right;}
@@ -1159,34 +1177,61 @@
 
     <!-- ============ PARAMETER ADMIN ============ -->
     <div id="view-parameter" class="view hidden">
-      <div class="card card-pad">
-        <div class="section-title">Daftar Parameter Pemeriksaan</div>
-        <div class="section-desc">Tambah, ubah, atau hapus parameter tanpa mengubah kode program. Perubahan berlaku langsung pada formulir input.</div>
-        <div class="section-desc">Isi <b>Kategori Utama</b> bila parameter ini punya kelompok besar yang membawahi beberapa sub-kelompok (mis. "Kimia Klinik" membawahi "Gula Darah", "Faal Ginjal", "Lemak", dst). Kosongkan Kategori Utama bila kategorinya berdiri sendiri (mis. "Hematologi", "Imunoserologi"). Isi kolom <b>Kategori</b> untuk sub-kelompoknya (mis. "Gula Darah", "Faal Hati") — ini yang dipakai mengelompokkan tampilan hasil cetak. Urutan baris di sini menentukan urutan tampil.</div>
-        <div class="locked-note hidden" id="paramLockedNote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Mode lihat saja.
-        </div>
-        <div class="padmin-head"><div>Nama Parameter</div><div>Kategori Utama</div><div>Kategori</div><div>Nilai Rujukan Default</div><div>Harga (Rp)</div><div></div></div>
-        <div id="paramAdminList"></div>
-        <datalist id="dlKategoriUtama"></datalist>
-        <datalist id="dlKategori"></datalist>
-        <button class="btn btn-outline" id="btnTambahParameter" style="margin-top:14px;" onclick="tambahParameterBaris()">+ Tambah Parameter</button>
-        <div class="form-actions">
-          <button class="btn btn-primary" id="btnSimpanParameter" onclick="simpanParameter()">Simpan Perubahan Parameter</button>
+      <div class="sheet-tabs">
+        <button class="sheet-tab active" id="sheetTabBtnDaftar" onclick="switchParamTab('daftar')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Daftar Parameter
+        </button>
+        <button class="sheet-tab" id="sheetTabBtnHarga" onclick="switchParamTab('harga')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2M9.5 9a2.5 2.5 0 0 1 2.5-1.5c1.5 0 2.5.8 2.5 2s-1 1.7-2.5 2-2.5.8-2.5 2 1 2 2.5 2a2.5 2.5 0 0 0 2.5-1.5"/></svg>
+          Harga per Jenis Pemeriksaan
+        </button>
+      </div>
+
+      <div id="paramTabDaftar" class="sheet-tab-panel">
+        <div class="card card-pad">
+          <div class="section-title">Daftar Parameter Pemeriksaan</div>
+          <div class="section-desc">Tambah, ubah, atau hapus parameter tanpa mengubah kode program. Perubahan berlaku langsung pada formulir input.</div>
+          <div class="section-desc">Isi <b>Kategori Utama</b> bila parameter ini punya kelompok besar yang membawahi beberapa sub-kelompok (mis. "Kimia Klinik" membawahi "Gula Darah", "Faal Ginjal", "Lemak", dst). Kosongkan Kategori Utama bila kategorinya berdiri sendiri (mis. "Hematologi", "Imunoserologi"). Isi kolom <b>Kategori</b> untuk sub-kelompoknya (mis. "Gula Darah", "Faal Hati") — ini yang dipakai mengelompokkan tampilan hasil cetak. Urutan baris di sini menentukan urutan tampil.</div>
+          <div class="locked-note hidden" id="paramLockedNote">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Mode lihat saja.
+          </div>
+          <div class="padmin-toolbar">
+            <input type="text" id="paramAdminSearch" placeholder="Cari nama parameter, kategori utama, atau kategori…" oninput="onParamAdminSearch()">
+            <label class="padmin-pagesize-label">Baris per halaman
+              <select id="paramAdminPageSize" onchange="onParamAdminPageSizeChange()">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+          </div>
+          <div class="padmin-head"><div>Nama Parameter</div><div>Kategori Utama</div><div>Kategori</div><div>Nilai Rujukan Default</div><div>Harga (Rp)</div><div></div></div>
+          <div id="paramAdminList"></div>
+          <div class="padmin-pagination" id="paramAdminPagination"></div>
+          <datalist id="dlKategoriUtama"></datalist>
+          <datalist id="dlKategori"></datalist>
+          <button class="btn btn-outline" id="btnTambahParameter" style="margin-top:14px;" onclick="tambahParameterBaris()">+ Tambah Parameter</button>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btnSimpanParameter" onclick="simpanParameter()">Simpan Perubahan Parameter</button>
+          </div>
         </div>
       </div>
 
-      <div class="card card-pad">
-        <div class="section-title">Harga per Jenis Pemeriksaan</div>
-        <div class="section-desc">Terutama untuk pemeriksaan lingkungan yang biayanya dihitung per sampel/jenis (bukan per parameter satuan), mis. "Lingkungan &gt; Makanan". Harga di sini otomatis terhitung di Loket Pendaftaran saat jenis pemeriksaan itu dicentang. Daftar jenisnya sendiri diatur lewat menu Pengaturan Umum.</div>
-        <div class="locked-note hidden" id="jenisHargaLockedNote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Mode lihat saja.
-        </div>
-        <div id="jenisHargaList"></div>
-        <div class="form-actions">
-          <button class="btn btn-primary" id="btnSimpanJenisHarga" onclick="simpanJenisHarga()">Simpan Harga Jenis Pemeriksaan</button>
+      <div id="paramTabHarga" class="sheet-tab-panel hidden">
+        <div class="card card-pad">
+          <div class="section-title">Harga per Jenis Pemeriksaan</div>
+          <div class="section-desc">Terutama untuk pemeriksaan lingkungan yang biayanya dihitung per sampel/jenis (bukan per parameter satuan), mis. "Lingkungan &gt; Makanan". Harga di sini otomatis terhitung di Loket Pendaftaran saat jenis pemeriksaan itu dicentang. Daftar jenisnya sendiri diatur lewat menu Pengaturan Umum.</div>
+          <div class="locked-note hidden" id="jenisHargaLockedNote">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Mode lihat saja.
+          </div>
+          <div id="jenisHargaList"></div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btnSimpanJenisHarga" onclick="simpanJenisHarga()">Simpan Harga Jenis Pemeriksaan</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2789,10 +2834,39 @@ function openRiwayat(nama, tglLahir){
    PARAMETER ADMIN (CRUD tanpa ubah kode)
    ========================================================================= */
 let PARAM_DRAFT = [];
+// State pencarian, jumlah baris per halaman, dan halaman aktif untuk tabel Daftar Parameter.
+let PARAM_ADMIN_SEARCH = '';
+let PARAM_ADMIN_PAGE_SIZE = 25;
+let PARAM_ADMIN_PAGE = 1;
 function renderParamAdmin(){
   PARAM_DRAFT = JSON.parse(JSON.stringify(PARAMS));
+  PARAM_ADMIN_PAGE = 1;
   drawParamAdmin();
   renderJenisHargaAdmin();
+}
+// Tab ala "sheet" (Daftar Parameter / Harga per Jenis Pemeriksaan) — sama-sama di menu Kelola
+// Parameter, tidak membuat menu baru.
+let PARAM_ACTIVE_TAB = 'daftar';
+function switchParamTab(tab){
+  PARAM_ACTIVE_TAB = tab;
+  document.getElementById('paramTabDaftar').classList.toggle('hidden', tab!=='daftar');
+  document.getElementById('paramTabHarga').classList.toggle('hidden', tab!=='harga');
+  document.getElementById('sheetTabBtnDaftar').classList.toggle('active', tab==='daftar');
+  document.getElementById('sheetTabBtnHarga').classList.toggle('active', tab==='harga');
+}
+function onParamAdminSearch(){
+  PARAM_ADMIN_SEARCH = document.getElementById('paramAdminSearch').value.toLowerCase().trim();
+  PARAM_ADMIN_PAGE = 1;
+  drawParamAdmin();
+}
+function onParamAdminPageSizeChange(){
+  PARAM_ADMIN_PAGE_SIZE = Number(document.getElementById('paramAdminPageSize').value) || 25;
+  PARAM_ADMIN_PAGE = 1;
+  drawParamAdmin();
+}
+function gotoParamAdminPage(p){
+  PARAM_ADMIN_PAGE = p;
+  drawParamAdmin();
 }
 /* ---- Harga per Jenis Pemeriksaan (Lingkungan, dsb) ---- */
 let JENIS_HARGA_DRAFT = {};
@@ -2846,19 +2920,76 @@ function drawParamAdmin(){
   if(addBtn) addBtn.style.display = fullEdit ? '' : 'none';
   const saveBtn = document.getElementById('btnSimpanParameter');
   if(saveBtn) saveBtn.style.display = (fullEdit || hargaOnly) ? '' : 'none';
-  wrap.innerHTML = PARAM_DRAFT.map((p,i)=>`
-    <div class="padmin-row">
-      <input type="text" ${dis} value="${escapeHtml(p.nama)}" oninput="PARAM_DRAFT[${i}].nama=this.value" placeholder="Nama parameter">
-      <input type="text" ${dis} value="${escapeHtml(p.kategoriUtama||'')}" oninput="PARAM_DRAFT[${i}].kategoriUtama=this.value" placeholder="cth. Kimia Klinik" list="dlKategoriUtama">
-      <input type="text" ${dis} value="${escapeHtml(p.kategori||'')}" oninput="PARAM_DRAFT[${i}].kategori=this.value" placeholder="cth. Gula Darah" list="dlKategori">
-      <input type="text" ${dis} value="${escapeHtml(p.rujukan)}" oninput="PARAM_DRAFT[${i}].rujukan=this.value" placeholder="cth. 70–100 mg/dL">
-      <input type="number" ${disExceptHarga} min="0" step="500" value="${p.harga||0}" oninput="PARAM_DRAFT[${i}].harga=Number(this.value)||0" placeholder="0">
-      <div style="display:flex;gap:4px;">
-        <button class="btn btn-sm btn-outline" title="Pindah ke atas" onclick="pindahParameterBaris(${i},-1)" ${i===0||!fullEdit?'disabled':''}>↑</button>
-        <button class="btn btn-sm btn-outline" title="Pindah ke bawah" onclick="pindahParameterBaris(${i},1)" ${i===PARAM_DRAFT.length-1||!fullEdit?'disabled':''}>↓</button>
-        <button class="btn btn-sm btn-danger" onclick="hapusParameterBaris(${i})" ${fullEdit?'':'disabled'}>Hapus</button>
-      </div>
-    </div>`).join('');
+
+  // Cari (berdasarkan Nama Parameter/Kategori Utama/Kategori) — tetap simpan indeks ASLI di
+  // PARAM_DRAFT untuk tiap baris (bukan indeks hasil filter), supaya edit/hapus/pindah tetap kena
+  // baris yang benar di array sesungguhnya walau tabelnya sedang difilter/dipaginasi.
+  const q = PARAM_ADMIN_SEARCH;
+  const withIndex = PARAM_DRAFT.map((p,i)=>({p,i}));
+  const filtered = q ? withIndex.filter(({p})=>
+    (p.nama||'').toLowerCase().includes(q) ||
+    (p.kategoriUtama||'').toLowerCase().includes(q) ||
+    (p.kategori||'').toLowerCase().includes(q)
+  ) : withIndex;
+
+  // Pagination
+  const pageSize = PARAM_ADMIN_PAGE_SIZE;
+  const totalRows = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+  if(PARAM_ADMIN_PAGE > totalPages) PARAM_ADMIN_PAGE = totalPages;
+  if(PARAM_ADMIN_PAGE < 1) PARAM_ADMIN_PAGE = 1;
+  const startIdx = (PARAM_ADMIN_PAGE - 1) * pageSize;
+  const pageItems = filtered.slice(startIdx, startIdx + pageSize);
+  // Saat lagi difilter (pencarian aktif), tombol pindah urutan (↑/↓) dinonaktifkan — memindah
+  // baris yang sedang tersembunyi oleh filter bisa membingungkan karena "atas/bawah"-nya jadi
+  // relatif ke seluruh daftar, bukan ke yang sedang terlihat.
+  const moveDisabled = !fullEdit || !!q;
+
+  if(totalRows===0){
+    wrap.innerHTML = `<div class="hint" style="padding:14px 0;">${q ? 'Tidak ada parameter yang cocok dengan pencarian.' : 'Belum ada parameter.'}</div>`;
+  }else{
+    wrap.innerHTML = pageItems.map(({p,i})=>`
+      <div class="padmin-row">
+        <input type="text" ${dis} value="${escapeHtml(p.nama)}" oninput="PARAM_DRAFT[${i}].nama=this.value" placeholder="Nama parameter">
+        <input type="text" ${dis} value="${escapeHtml(p.kategoriUtama||'')}" oninput="PARAM_DRAFT[${i}].kategoriUtama=this.value" placeholder="cth. Kimia Klinik" list="dlKategoriUtama">
+        <input type="text" ${dis} value="${escapeHtml(p.kategori||'')}" oninput="PARAM_DRAFT[${i}].kategori=this.value" placeholder="cth. Gula Darah" list="dlKategori">
+        <input type="text" ${dis} value="${escapeHtml(p.rujukan)}" oninput="PARAM_DRAFT[${i}].rujukan=this.value" placeholder="cth. 70–100 mg/dL">
+        <input type="number" ${disExceptHarga} min="0" step="500" value="${p.harga||0}" oninput="PARAM_DRAFT[${i}].harga=Number(this.value)||0" placeholder="0">
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-sm btn-outline" title="Pindah ke atas" onclick="pindahParameterBaris(${i},-1)" ${i===0||moveDisabled?'disabled':''}>↑</button>
+          <button class="btn btn-sm btn-outline" title="Pindah ke bawah" onclick="pindahParameterBaris(${i},1)" ${i===PARAM_DRAFT.length-1||moveDisabled?'disabled':''}>↓</button>
+          <button class="btn btn-sm btn-danger" onclick="hapusParameterBaris(${i})" ${fullEdit?'':'disabled'}>Hapus</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Kontrol halaman
+  const pagWrap = document.getElementById('paramAdminPagination');
+  if(pagWrap){
+    if(totalRows===0){
+      pagWrap.innerHTML = '';
+    }else{
+      const rangeStart = startIdx+1;
+      const rangeEnd = Math.min(startIdx+pageSize, totalRows);
+      let pageBtns = '';
+      for(let p=1;p<=totalPages;p++){
+        // Kalau halamannya banyak, cukup tampilkan di sekitar halaman aktif + halaman pertama/terakhir.
+        if(totalPages<=7 || p===1 || p===totalPages || Math.abs(p-PARAM_ADMIN_PAGE)<=1){
+          pageBtns += `<button class="${p===PARAM_ADMIN_PAGE?'active':''}" onclick="gotoParamAdminPage(${p})">${p}</button>`;
+        }else if(Math.abs(p-PARAM_ADMIN_PAGE)===2){
+          pageBtns += `<span style="padding:0 2px;color:var(--ink-faint);">…</span>`;
+        }
+      }
+      pagWrap.innerHTML = `
+        <div class="info">Menampilkan ${rangeStart}–${rangeEnd} dari ${totalRows} parameter${q ? ' (hasil pencarian)' : ''}</div>
+        <div class="pages">
+          <button onclick="gotoParamAdminPage(${PARAM_ADMIN_PAGE-1})" ${PARAM_ADMIN_PAGE<=1?'disabled':''}>‹</button>
+          ${pageBtns}
+          <button onclick="gotoParamAdminPage(${PARAM_ADMIN_PAGE+1})" ${PARAM_ADMIN_PAGE>=totalPages?'disabled':''}>›</button>
+        </div>`;
+    }
+  }
+
   const katUtamaSet = [...new Set(PARAM_DRAFT.map(p=>p.kategoriUtama).filter(Boolean))];
   const dlU = document.getElementById('dlKategoriUtama');
   if(dlU) dlU.innerHTML = katUtamaSet.map(k=>`<option value="${escapeHtml(k)}">`).join('');
@@ -2876,6 +3007,12 @@ function pindahParameterBaris(i, dir){
 function tambahParameterBaris(){
   if(!guardEdit('parameter')) return;
   PARAM_DRAFT.push({id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), nama:'', kategoriUtama:'', kategori:'', rujukan:'', harga:0});
+  // Bersihkan pencarian & lompat ke halaman terakhir supaya baris baru langsung kelihatan/bisa
+  // diisi, tidak "hilang" ketersembunyi di halaman lain akibat pagination.
+  PARAM_ADMIN_SEARCH = '';
+  const searchInput = document.getElementById('paramAdminSearch');
+  if(searchInput) searchInput.value = '';
+  PARAM_ADMIN_PAGE = Math.ceil(PARAM_DRAFT.length / PARAM_ADMIN_PAGE_SIZE) || 1;
   drawParamAdmin();
 }
 function hapusParameterBaris(i){
