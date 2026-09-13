@@ -257,6 +257,50 @@
   .status-pill-count{font-family:var(--font-mono);font-weight:700;font-size:14px;color:var(--ink);}
   .status-pill-bar{height:6px;border-radius:100px;background:var(--bg);overflow:hidden;flex:1;max-width:110px;}
   .status-pill-bar-fill{height:100%;border-radius:100px;}
+  /* ---------- Dashboard redesain (kartu hero + gauge + kalender mini + feed aktivitas) ---------- */
+  .dash-hero-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-bottom:16px;align-items:stretch;}
+  @media (max-width:1180px){ .dash-hero-grid{grid-template-columns:1.3fr 1fr;} .dash-hero-side{grid-column:1/-1;} }
+  @media (max-width:760px){ .dash-hero-grid{grid-template-columns:1fr;} .dash-hero-side{grid-column:auto;} }
+  .dash-hero-card{
+    background:linear-gradient(150deg,var(--primary-dark) 0%, var(--primary) 100%);
+    border-radius:18px;padding:22px 22px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    box-shadow:0 14px 34px rgba(62,22,82,.28);position:relative;overflow:hidden;
+  }
+  .dash-hero-card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(circle at 12% 15%, rgba(255,255,255,.08) 0, transparent 42%),radial-gradient(circle at 90% 90%, rgba(255,255,255,.08) 0, transparent 45%);}
+  .dash-hero-card > *{position:relative;z-index:1;}
+  .dash-hero-num{font-family:var(--font-mono);font-size:34px;font-weight:800;line-height:1;display:flex;align-items:center;gap:8px;}
+  .dash-hero-num svg{width:20px;height:20px;color:var(--accent-100,#FBEFDD);}
+  .dash-hero-label{font-size:13px;color:rgba(255,255,255,.78);font-weight:600;margin-top:6px;}
+  .dash-gauge{position:relative;width:88px;height:88px;flex:none;display:flex;align-items:center;justify-content:center;}
+  .dash-gauge svg{transform:rotate(-90deg);}
+  .dash-gauge-track{stroke:rgba(255,255,255,.18);}
+  .dash-gauge-fill{stroke:var(--accent,#C4832C);stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+  .dash-gauge-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .dash-gauge-text .pct{font-family:var(--font-mono);font-weight:800;font-size:16px;}
+  .dash-gauge-text .lbl{font-size:9px;color:rgba(255,255,255,.7);margin-top:1px;letter-spacing:.02em;}
+  .dash-hero-side{display:flex;flex-direction:column;gap:16px;}
+  .dash-mini-card{background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);flex:1;display:flex;align-items:center;gap:12px;}
+  .dash-mini-ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .dash-mini-ic svg{width:20px;height:20px;}
+  .dash-mini-num{font-family:var(--font-mono);font-size:20px;font-weight:800;color:var(--ink);}
+  .dash-mini-label{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:1px;}
+  .dash-side-col{background:var(--surface);border-radius:16px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;}
+  .dash-cal-head{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--ink);}
+  .dash-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
+  .dash-cal-grid .dow{font-size:9.5px;color:var(--ink-faint);font-weight:700;padding-bottom:2px;}
+  .dash-cal-grid .day{font-size:11px;color:var(--ink-soft);padding:5px 0;border-radius:7px;}
+  .dash-cal-grid .day.today{background:var(--primary);color:#fff;font-weight:800;}
+  .dash-cal-grid .day.blank{visibility:hidden;}
+  .dash-feed{display:flex;flex-direction:column;gap:2px;}
+  .dash-feed-title{font-size:11px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+  .dash-feed-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .dash-feed-item:last-child{border-bottom:none;}
+  .dash-feed-dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:5px;}
+  .dash-feed-text{font-size:12px;color:var(--ink);font-weight:600;line-height:1.4;}
+  .dash-feed-time{font-size:10.5px;color:var(--ink-faint);margin-top:1px;}
+  .dash-chart-card-title{display:flex;align-items:center;gap:9px;margin-bottom:2px;}
+  .dash-chart-card-title .ic{width:30px;height:30px;border-radius:9px;background:var(--primary-100);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;flex:none;}
+  .dash-chart-card-title .ic svg{width:16px;height:16px;}
 
 
   /* ---------- Form layout ---------- */
@@ -679,9 +723,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         Cari &amp; Daftar Data
       </button>
-      <button class="nav-btn" data-view="loket" onclick="goView('loket')">
+      <button class="nav-btn nav-btn-loket-kat" data-view="loket" data-loketkat="medis" onclick="goLoketKategori('medis')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
-        Loket Pendaftaran
+        Pendaftaran Medis
+      </button>
+      <button class="nav-btn nav-btn-loket-kat" data-view="loket" data-loketkat="lingkungan" onclick="goLoketKategori('lingkungan')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
+        Pendaftaran Lingkungan
       </button>
       <button class="nav-btn" data-view="rekap" onclick="goView('rekap')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 12V8M13 12v3M8 12v6"/></svg>
@@ -763,15 +811,50 @@
         <svg class="dash-banner-art" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="58" stroke="rgba(255,255,255,.18)" stroke-width="2"/><path d="M40 75V45m20 30V35m20 40V55" stroke="rgba(255,255,255,.55)" stroke-width="6" stroke-linecap="round"/></svg>
       </div>
 
+      <div class="dash-hero-grid">
+        <div class="dash-hero-card">
+          <div>
+            <div class="dash-hero-num">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span id="statTotal">0</span>
+            </div>
+            <div class="dash-hero-label">Total Pemeriksaan</div>
+          </div>
+          <div class="dash-gauge">
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle class="dash-gauge-track" cx="44" cy="44" r="38" fill="none" stroke-width="8"/>
+              <circle class="dash-gauge-fill" id="dashGaugeCircle" cx="44" cy="44" r="38" fill="none" stroke-width="8" stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+            </svg>
+            <div class="dash-gauge-text"><span class="pct" id="dashGaugePct">0%</span><span class="lbl">Verifikasi</span></div>
+          </div>
+        </div>
+        <div class="dash-hero-side">
+          <div class="dash-mini-card stat-c2">
+            <div class="dash-mini-ic" style="background:var(--accent-100);color:#8A5A16;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <div><div class="dash-mini-num" id="statToday">0</div><div class="dash-mini-label">Pemeriksaan Hari Ini</div></div>
+          </div>
+          <div class="dash-mini-card" id="dashMiniLoketPending">
+            <div class="dash-mini-ic" style="background:#FDECEC;color:#A23B34;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div><div class="dash-mini-num" id="statLoketPending">0</div><div class="dash-mini-label">Loket Menunggu Diproses</div></div>
+          </div>
+        </div>
+        <div class="dash-hero-side dash-side-col">
+          <div class="dash-cal-head">
+            <span id="dashCalMonth">—</span>
+          </div>
+          <div class="dash-cal-grid" id="dashCalGrid"></div>
+          <div class="dash-feed">
+            <div class="dash-feed-title">Aktivitas Terbaru</div>
+            <div id="dashFeed"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="stat-grid">
-        <div class="card stat-card stat-c1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-ic"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <div class="n" id="statTotal">0</div><div class="l">Total Pemeriksaan</div>
-        </div>
-        <div class="card stat-card stat-c2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-ic"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          <div class="n" id="statToday">0</div><div class="l">Pemeriksaan Hari Ini</div>
-        </div>
         <div class="card stat-card stat-c3">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-ic"><path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>
           <div class="n" id="statParams">0</div><div class="l">Parameter Aktif</div>
@@ -784,20 +867,22 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-ic"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
           <div class="n" id="statLoketToday">0</div><div class="l">Pendaftaran Loket Hari Ini</div>
         </div>
-        <div class="card stat-card stat-c6">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-ic"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          <div class="n" id="statLoketPending">0</div><div class="l">Loket Menunggu Diproses</div>
-        </div>
       </div>
 
       <div class="dash-grid-2">
         <div class="card card-pad">
-          <div class="section-title">Ringkasan Aktivitas Laboratorium</div>
+          <div class="dash-chart-card-title">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+            <div class="section-title" style="margin:0;">Ringkasan Aktivitas Laboratorium</div>
+          </div>
           <div class="section-desc">Jumlah pemeriksaan yang diinput per hari, 7 hari terakhir.</div>
           <div id="aktivitasChart" style="margin-top:10px;"></div>
         </div>
         <div class="card card-pad">
-          <div class="section-title">Status Alur Verifikasi</div>
+          <div class="dash-chart-card-title">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+            <div class="section-title" style="margin:0;">Status Alur Verifikasi</div>
+          </div>
           <div class="section-desc">Sebaran status seluruh data hasil pemeriksaan saat ini.</div>
           <div id="statusBreakdown" style="margin-top:12px;"></div>
         </div>
@@ -978,7 +1063,7 @@
         <div class="section-desc">Isi data pasien saat mendaftar di loket. Data ini bisa langsung dilanjutkan ke menu Input Hasil oleh petugas laboratorium.</div>
         <input type="hidden" id="lokId">
         <div class="grid-2">
-          <div class="field"><label>Nomor Kwitansi</label><input type="text" id="lokNoKwitansi" placeholder="cth. 000123"></div>
+          <div class="field"><label>Nomor Kwitansi</label><input type="text" id="lokNoKwitansi" placeholder="(otomatis saat disimpan)" readonly style="background:var(--bg);cursor:not-allowed;"></div>
           <div class="field"><label class="req">Jenis Pendaftaran</label>
             <select id="lokKategoriLoket">
               <option value="berbayar_tunai">Berbayar Tunai</option>
@@ -1024,7 +1109,7 @@
         <div class="field" style="margin-top:14px;"><label>Keterangan Invoice <span class="hint" style="font-weight:400;">(mis. tanggal pengambilan hasil — beda untuk medis & lingkungan)</span></label><input type="text" id="lokKetInvoice" placeholder="cth. Hasil dapat diambil 3 hari kerja setelah pendaftaran"></div>
 
         <div class="form-actions">
-          <button class="btn btn-primary" onclick="simpanRegistrasi()">Simpan Pendaftaran</button>
+          <button class="btn btn-primary" id="btnSimpanLoket" onclick="simpanRegistrasi()">Simpan Pendaftaran</button>
           <button class="btn btn-outline" onclick="lokFormBaru()">+ Pendaftaran Baru</button>
           <button class="btn btn-outline" id="btnCetakInvoiceLok" disabled onclick="cetakInvoiceLoket(document.getElementById('lokId').value)">Cetak Invoice</button>
           <button class="btn btn-outline" onclick="hapusRegistrasi()" id="btnHapusLok" disabled>Hapus</button>
@@ -1140,6 +1225,14 @@
           <div class="field"><label>Telepon / Kontak</label><input type="text" id="setTelp"></div>
           <div class="field"><label>Email</label><input type="text" id="setEmail" placeholder="cth. dinkes.labkesda@surabaya.go.id"></div>
           <div class="field"><label>Kota (untuk baris tanda tangan)</label><input type="text" id="setKota" placeholder="cth. Surabaya"></div>
+          <div class="field">
+            <label>Nomor Awal Kwitansi</label>
+            <div style="display:flex;gap:8px;">
+              <input type="number" id="setNoKwitansiMulai" min="1" placeholder="cth. 1" style="flex:1;">
+              <button type="button" id="btnResetNoKwitansi" class="btn btn-outline btn-sm" onclick="resetCounterNoKwitansi()">Reset ke Nomor Ini</button>
+            </div>
+            <span class="hint">Nomor kwitansi dibuat otomatis & berurutan (tersambung antara Pendaftaran Medis dan Lingkungan — satu nomor urut yang sama, bukan dua nomor urut terpisah), dan langsung terkunci begitu tombol "Simpan" ditekan supaya tidak ada 2 pendaftaran yang kebagian nomor sama walau disimpan hampir bersamaan. Ubah angka di atas lalu klik "Reset ke Nomor Ini" hanya kalau memang perlu mengatur ulang mulai dari nomor tertentu (mis. ganti tahun) — mengubah angka saja tanpa klik reset TIDAK mengubah apa pun.</span>
+          </div>
           <div class="field" style="grid-column:1/-1;"><label>Daftar Jenis Pemeriksaan Loket (satu per baris)</label>
             <textarea id="setJenisList" rows="6" placeholder="Medis&#10;Mikrobiologi &gt; Rectal&#10;Lingkungan &gt; Makanan&#10;Lingkungan &gt; Air Bersih"></textarea>
             <span class="hint">Tulis satu baris untuk jenis berdiri sendiri (mis. "Medis"), atau format "Kelompok &gt; Nama" untuk sub-jenis (mis. "Lingkungan &gt; Air Minum"). Daftar ini yang muncul sebagai pilihan centang pada menu Loket Pendaftaran.</span>
@@ -1268,7 +1361,7 @@
 /* =========================================================================
    STORAGE LAYER
    ========================================================================= */
-const KEYS = { USERS:'app:users', PARAMS:'app:parameters', SETTINGS:'app:settings', RECORDS:'app:records', DRAFT:'app:draft', REGISTRATIONS:'app:registrations', AUDIT:'app:audit' };
+const KEYS = { USERS:'app:users', PARAMS:'app:parameters', SETTINGS:'app:settings', RECORDS:'app:records', DRAFT:'app:draft', REGISTRATIONS:'app:registrations', AUDIT:'app:audit', NOKWITANSI_COUNTER:'app:nokwitansi_counter' };
 // Draf autosave Input Hasil di-scope PER USERNAME (bukan satu key global) — supaya kalau beberapa
 // akun login bersamaan (lihat catatan SESSION_KEY di bawah), draf isian form satu akun tidak
 // tertimpa atau ketuker dengan draf akun lain yang kebetulan sedang mengisi form di saat sama.
@@ -1407,6 +1500,8 @@ let AUDIT = [];
 let CURRENT_USER = null;
 let EDITING_ID = null;      // id of record currently loaded in form
 let EDITING_LOK_ID = null;  // id of registration currently loaded in loket form
+// Kategori menu Loket Pendaftaran yang sedang aktif: 'medis' atau 'lingkungan'.
+let CURRENT_LOKET_KATEGORI = 'medis';
 // Kategori menu Input Hasil yang sedang aktif ('' = Semua Hasil, tanpa filter kategori).
 let CURRENT_HASIL_KATEGORI = '';
 // Setiap kategori dicocokkan ke jenis pemeriksaan Loket lewat kata kunci (tidak peka huruf besar/kecil).
@@ -1461,6 +1556,14 @@ function jenisCocokKategori(jenisList, kategoriKey){
 function goFormKategori(kategori){
   CURRENT_HASIL_KATEGORI = kategori || '';
   goView('form');
+}
+// Ganti sub-bagian Loket Pendaftaran (Medis / Lingkungan). Karena pindah kategori berarti pindah
+// konteks pendaftaran yang berbeda, formulir loket ikut direset ke kosong (form baru) supaya
+// isian dari kategori sebelumnya tidak kebawa/ketuker.
+function goLoketKategori(kategori){
+  CURRENT_LOKET_KATEGORI = kategori || 'medis';
+  EDITING_LOK_ID = null;
+  goView('loket');
 }
 function toggleNavHasil(forceOpen){
   const sub = document.getElementById('navHasilSub');
@@ -1780,6 +1883,7 @@ const DEFAULT_SETTINGS = {
   telp:'( 031 ) 99043656',
   email:'dinkes.labkesda@surabaya.go.id',
   kota:'Surabaya',
+  noKwitansiMulai: 1,
   pemeriksaList: ['Ajeng Prameswari, A.Md.AK', 'Agita Fortuna Septa N., A.Md.Kes'],
   dokterList: [{nama:'dr. Fara Nayo F., M.Ked.Klin., Sp.MK', nip:''}],
   kepalaUptdList: [{nama:'Umi Widayati, S.Si', nip:'197103011998032005'}],
@@ -2004,14 +2108,17 @@ function goView(name){
   document.querySelectorAll('.nav-btn').forEach(b=>{
     if(b.classList.contains('nav-btn-hasil-kat')){
       b.classList.toggle('active', name==='form' && b.dataset.kategori === (CURRENT_HASIL_KATEGORI||''));
+    }else if(b.classList.contains('nav-btn-loket-kat')){
+      b.classList.toggle('active', name==='loket' && b.dataset.loketkat === CURRENT_LOKET_KATEGORI);
     }else{
       b.classList.toggle('active', b.dataset.view===name);
     }
   });
   toggleNavHasil(name==='form');
   const kategoriInfo = (name==='form' && CURRENT_HASIL_KATEGORI) ? KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI] : null;
-  document.getElementById('pageTitle').textContent = kategoriInfo ? kategoriInfo.label : (VIEW_META[name]?.title || '');
-  document.getElementById('pageSub').textContent = kategoriInfo ? 'Antrian & pengisian hasil untuk kategori ini' : (VIEW_META[name]?.sub || '');
+  const loketTitle = name==='loket' ? (CURRENT_LOKET_KATEGORI==='lingkungan' ? 'Pendaftaran Lingkungan' : 'Pendaftaran Medis') : null;
+  document.getElementById('pageTitle').textContent = kategoriInfo ? kategoriInfo.label : (loketTitle || (VIEW_META[name]?.title || ''));
+  document.getElementById('pageSub').textContent = kategoriInfo ? 'Antrian & pengisian hasil untuk kategori ini' : (loketTitle ? `Pendaftaran loket khusus kategori ${CURRENT_LOKET_KATEGORI}` : (VIEW_META[name]?.sub || ''));
   closeSidebar();
   if(name==='dashboard') renderDashboard();
   if(name==='cari') renderSearchResults();
@@ -2511,22 +2618,73 @@ function renderDashboard(){
   const uniquePatients = new Set(RECORDS.map(r=>r.nama.toLowerCase()+'|'+(r.tglLahir||''))).size;
   document.getElementById('statPatients').textContent = uniquePatients;
 
+  // Gauge lingkaran pada kartu hero: persentase hasil yang sudah Terverifikasi dari total RECORDS.
+  const verifCount = RECORDS.filter(r=>r.status==='terverifikasi').length;
+  const verifPct = RECORDS.length ? Math.round(verifCount/RECORDS.length*100) : 0;
+  const gaugeCircle = document.getElementById('dashGaugeCircle');
+  if(gaugeCircle){
+    const circumference = 2*Math.PI*38; // r=38
+    gaugeCircle.setAttribute('stroke-dasharray', circumference.toFixed(2));
+    gaugeCircle.setAttribute('stroke-dashoffset', (circumference*(1-verifPct/100)).toFixed(2));
+  }
+  document.getElementById('dashGaugePct').textContent = verifPct + '%';
+
   const loketCardToday = document.getElementById('statLoketToday').closest('.stat-card');
-  const loketCardPending = document.getElementById('statLoketPending').closest('.stat-card');
+  const loketMiniPending = document.getElementById('dashMiniLoketPending');
   const showLoket = canAccessView('loket');
   loketCardToday.style.display = showLoket ? '' : 'none';
-  loketCardPending.style.display = showLoket ? '' : 'none';
+  loketMiniPending.style.display = showLoket ? '' : 'none';
   if(showLoket){
     document.getElementById('statLoketToday').textContent = REGISTRATIONS.filter(r=>(r.createdAt||'').slice(0,10)===todayISO()).length;
     document.getElementById('statLoketPending').textContent = REGISTRATIONS.filter(r=>!r.processed).length;
   }
 
+  renderDashCalendar();
+  renderDashFeed();
   renderAktivitasChart();
   renderStatusBreakdown();
 
   const recent = [...RECORDS].sort((a,b)=> (b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,6);
   const wrap = document.getElementById('recentList');
   wrap.innerHTML = recent.length===0 ? emptyStateHtml('Belum ada data pemeriksaan.') : recent.map(r=>resultItemHtml(r)).join('');
+}
+// Kalender mini (dekoratif, tidak interaktif) untuk bulan berjalan — menyorot tanggal hari ini,
+// menemani kartu ringkasan di kolom kanan dashboard.
+function renderDashCalendar(){
+  const monthEl = document.getElementById('dashCalMonth');
+  const gridEl = document.getElementById('dashCalGrid');
+  if(!monthEl || !gridEl) return;
+  const now = new Date();
+  monthEl.textContent = now.toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+  const dow = ['Mg','Sn','Sl','Rb','Km','Jm','Sb'];
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOffset = firstOfMonth.getDay(); // 0=Minggu
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  let html = dow.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<startOffset;i++) html += `<div class="day blank"></div>`;
+  for(let d=1; d<=daysInMonth; d++){
+    html += `<div class="day${d===now.getDate() ? ' today' : ''}">${d}</div>`;
+  }
+  gridEl.innerHTML = html;
+}
+// Feed aktivitas terbaru (versi ringkas untuk kolom kanan dashboard) — memakai data yang sama
+// dengan "Pemeriksaan Terbaru" di bawah, hanya ditampilkan lebih ringkas dengan titik warna status.
+function renderDashFeed(){
+  const wrap = document.getElementById('dashFeed');
+  if(!wrap) return;
+  const dotColor = { diinput:'#8A5A16', menunggu_verifikasi:'#6B2FA6', revisi:'#A23B34', terverifikasi:'#1E7A4A' };
+  const recent = [...RECORDS].sort((a,b)=> (b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,5);
+  wrap.innerHTML = recent.length===0 ? `<div class="dash-feed-item"><span class="dash-feed-text" style="color:var(--ink-faint);font-weight:400;">Belum ada aktivitas.</span></div>` : recent.map(r=>{
+    const statusInfo = HASIL_STATUS[r.status||'diinput'];
+    return `
+    <div class="dash-feed-item">
+      <span class="dash-feed-dot" style="background:${dotColor[r.status||'diinput']}"></span>
+      <div>
+        <div class="dash-feed-text">${escapeHtml(r.nomorLab)} — ${escapeHtml(r.nama)}</div>
+        <div class="dash-feed-time">${statusInfo ? escapeHtml(statusInfo.label) : ''} · ${fmtDateTime(r.updatedAt||r.createdAt)}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 // Ringkasan sebaran status alur verifikasi (Diinput/Menunggu Verifikasi/Perlu Revisi/Terverifikasi).
 function renderStatusBreakdown(){
@@ -2824,6 +2982,7 @@ function renderPengaturanForm(){
   document.getElementById('setTelp').value = SETTINGS.telp||'';
   document.getElementById('setEmail').value = SETTINGS.email||'';
   document.getElementById('setKota').value = SETTINGS.kota||'';
+  document.getElementById('setNoKwitansiMulai').value = SETTINGS.noKwitansiMulai || 1;
   document.getElementById('setPemeriksaList').value = (SETTINGS.pemeriksaList||[]).join('\n');
   document.getElementById('setJenisList').value = (SETTINGS.jenisList||[]).join('\n');
   DOKTER_DRAFT = JSON.parse(JSON.stringify(SETTINGS.dokterList||[]));
@@ -2836,6 +2995,7 @@ function renderPengaturanForm(){
   if(note) note.classList.toggle('hidden', editable);
   document.getElementById('btnTambahDokter').style.display = editable ? '' : 'none';
   document.getElementById('btnTambahKepala').style.display = editable ? '' : 'none';
+  document.getElementById('btnResetNoKwitansi').style.display = editable ? '' : 'none';
   document.getElementById('btnSimpanPengaturan').style.display = editable ? '' : 'none';
 }
 function drawDokterAdmin(){
@@ -2985,6 +3145,7 @@ async function simpanPengaturan(){
     telp: document.getElementById('setTelp').value.trim(),
     email: document.getElementById('setEmail').value.trim(),
     kota: document.getElementById('setKota').value.trim(),
+    noKwitansiMulai: Number(document.getElementById('setNoKwitansiMulai').value) || 1,
     pemeriksaList: document.getElementById('setPemeriksaList').value.split('\n').map(s=>s.trim()).filter(Boolean),
     jenisList: document.getElementById('setJenisList').value.split('\n').map(s=>s.trim()).filter(Boolean),
     dokterList: DOKTER_DRAFT.filter(d=>(d.nama||'').trim()).map(d=>({nama:d.nama.trim(), nip:(d.nip||'').trim(), ttd:d.ttd||'', stempel:d.stempel||'', ttdMode:d.ttdMode||'warna', stempelMode:d.stempelMode||'warna'})),
@@ -3078,6 +3239,63 @@ function parseJenisList(){
 }
 function jenisFullName(kel, nama){ return kel ? kel+' > '+nama : nama; }
 function isJenisLingkungan(full){ return (full||'').toLowerCase().startsWith('lingkungan >'); }
+// Sebuah pendaftaran dianggap "Lingkungan" kalau salah satu jenis pemeriksaan yang dicentang
+// adalah jenis Lingkungan; kalau tidak ada sama sekali (atau belum pilih jenis apa pun), dianggap
+// "Medis" — dipakai untuk memisahkan daftar pada 2 sub-bagian menu Loket Pendaftaran.
+function isRegistrasiLingkungan(rec){ return (rec.jenisPemeriksaan||[]).some(isJenisLingkungan); }
+
+// ============ NOMOR KWITANSI: satu nomor urut bersama (sinkron Medis & Lingkungan) ============
+// Disimpan sebagai satu baris counter { n, claimedBy, claimedAt } di cloud (KEYS.NOKWITANSI_COUNTER).
+// "n" = nomor TERAKHIR yang sudah terpakai. Untuk menghindari 2 pengguna kebagian nomor yang sama
+// kalau menekan Simpan hampir bersamaan, dipakai pola "klaim lalu verifikasi": tulis klaim nomor
+// berikutnya dengan token unik, tunggu sebentar (jeda acak), lalu baca ulang — kalau token yang
+// tersimpan masih token kita sendiri berarti tidak ada yang menimpa di jeda itu dan nomor sah
+// milik kita; kalau bukan, berarti ada pengguna lain yang menang duluan, jadi dicoba ulang dengan
+// nilai counter terbaru. Siapa pun yang benar-benar tuntas menyimpan lebih dulu, itu yang dapat
+// nomornya — sesuai permintaan "yang menekan simpan duluan yang dapat nomor kwitansinya".
+function formatNoKwitansi(n){ return String(n).padStart(6,'0'); }
+async function ambilNomorKwitansiBerikutnya(){
+  const maxRetry = 10;
+  for(let attempt=0; attempt<maxRetry; attempt++){
+    const counter = await sGet(KEYS.NOKWITANSI_COUNTER, null) || { n: (SETTINGS.noKwitansiMulai||1) - 1 };
+    const calon = counter.n + 1;
+    const token = (CURRENT_USER?.username||'anon') + ':' + Date.now() + ':' + Math.random().toString(36).slice(2,8);
+    await sSet(KEYS.NOKWITANSI_COUNTER, { n: calon, claimedBy: token, claimedAt: Date.now() });
+    // Jeda kecil + acak: memberi kesempatan bila ada pengguna lain menulis di waktu hampir
+    // bersamaan supaya ketahuan lewat verifikasi di bawah, sebelum nomor ini benar-benar dipakai.
+    await new Promise(res=>setTimeout(res, 150 + Math.random()*200));
+    const verifikasi = await sGet(KEYS.NOKWITANSI_COUNTER, null);
+    if(verifikasi && verifikasi.claimedBy === token){
+      return formatNoKwitansi(calon);
+    }
+    // Kalah klaim — ulangi dari nilai counter terbaru (bukan nilai lama yang sudah kepakai orang lain).
+  }
+  // Jalur cadangan (sangat jarang tercapai): tetap pakai nilai counter terbaru + 1 apa adanya,
+  // supaya proses menyimpan tidak macet total walau terjadi tabrakan berkali-kali berturut-turut.
+  const fallbackCounter = await sGet(KEYS.NOKWITANSI_COUNTER, null) || { n: (SETTINGS.noKwitansiMulai||1) - 1 };
+  const calon = fallbackCounter.n + 1;
+  await sSet(KEYS.NOKWITANSI_COUNTER, { n: calon, claimedBy: 'fallback', claimedAt: Date.now() });
+  return formatNoKwitansi(calon);
+}
+// Dipanggil dari tombol "Reset ke Nomor Ini" di Pengaturan Umum — sengaja perlu klik terpisah
+// (bukan otomatis ikut tersimpan saat Simpan Pengaturan) supaya tidak tidak sengaja mengacak
+// nomor yang sudah berjalan hanya karena mengetik angka di kolomnya.
+function resetCounterNoKwitansi(){
+  if(!guardEdit('pengaturan')) return;
+  const mulai = Number(document.getElementById('setNoKwitansiMulai').value) || 1;
+  confirmModal(
+    'Reset Nomor Kwitansi?',
+    `Nomor kwitansi berikutnya (baik dari Pendaftaran Medis maupun Lingkungan) akan mulai dari <b>${formatNoKwitansi(mulai)}</b>. Pastikan tidak ada nomor yang sedang berjalan lebih tinggi dari ini yang masih ingin dipakai.`,
+    async ()=>{
+      await sSet(KEYS.NOKWITANSI_COUNTER, { n: mulai-1, claimedBy:null, claimedAt:Date.now() });
+      SETTINGS.noKwitansiMulai = mulai;
+      await sSet(KEYS.SETTINGS, SETTINGS);
+      toast(`Nomor kwitansi berikutnya akan mulai dari ${formatNoKwitansi(mulai)}.`, 'ok');
+      logAudit('Reset Nomor Kwitansi', `Mulai dari ${formatNoKwitansi(mulai)}`);
+    },
+    'Ya, Reset', 'btn-primary'
+  );
+}
 function formatJenisDenganJumlah(jenisPemeriksaan, jenisJumlah){
   return (jenisPemeriksaan||[]).map(j=>{
     const jml = (jenisJumlah||{})[j];
@@ -3086,7 +3304,12 @@ function formatJenisDenganJumlah(jenisPemeriksaan, jenisJumlah){
 }
 function renderJenisGroups(){
   const wrap = document.getElementById('lokJenisGroups');
-  const groups = parseJenisList();
+  // Filter kelompok jenis pemeriksaan sesuai sub-bagian Loket yang aktif (Medis/Lingkungan) —
+  // kelompok berkode "Lingkungan" masuk bagian Lingkungan, sisanya masuk bagian Medis.
+  const groups = parseJenisList().filter(g=>{
+    const isLK = (g.key||'').toLowerCase()==='lingkungan';
+    return CURRENT_LOKET_KATEGORI==='lingkungan' ? isLK : !isLK;
+  });
   if(groups.length===0){ wrap.innerHTML = '<div class="hint">Belum ada jenis pemeriksaan. Tambahkan lewat menu Pengaturan Umum.</div>'; return; }
   wrap.innerHTML = groups.map(g=>`
     <div class="jenis-group">
@@ -3239,26 +3462,43 @@ function collectLoketForm(){
     catatan: document.getElementById('lokCatatan').value.trim(),
   };
 }
+let SIMPAN_LOKET_BUSY = false;
 async function simpanRegistrasi(){
   if(!guardEdit('loket')) return;
+  if(SIMPAN_LOKET_BUSY) return; // cegah klik ganda memakan 2 nomor kwitansi sekaligus
   const data = collectLoketForm();
   if(!data.nama){ toast('Nama Pasien wajib diisi.', 'err'); return; }
-  REGISTRATIONS = await sGet(KEYS.REGISTRATIONS, REGISTRATIONS);
-  const now = new Date().toISOString();
-  if(EDITING_LOK_ID){
-    const idx = REGISTRATIONS.findIndex(r=>r.id===EDITING_LOK_ID);
-    if(idx>=0) REGISTRATIONS[idx] = {...REGISTRATIONS[idx], ...data, updatedAt:now, updatedBy:CURRENT_USER.username};
-  }else{
-    const id = 'lok_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-    REGISTRATIONS.push({id, ...data, createdAt:now, createdBy:CURRENT_USER.username, updatedAt:now, updatedBy:CURRENT_USER.username});
-    EDITING_LOK_ID = id;
+  SIMPAN_LOKET_BUSY = true;
+  const btnSimpan = document.getElementById('btnSimpanLoket');
+  if(btnSimpan) btnSimpan.disabled = true;
+  try{
+    // Nomor kwitansi HANYA dibuat otomatis untuk pendaftaran BARU (belum pernah punya nomor).
+    // Diambil di sini (persis sebelum ditulis ke REGISTRATIONS) supaya jeda antara klaim & simpan
+    // sedekat mungkin — lihat catatan lengkap di ambilNomorKwitansiBerikutnya().
+    if(!EDITING_LOK_ID && !data.noKwitansi){
+      data.noKwitansi = await ambilNomorKwitansiBerikutnya();
+      document.getElementById('lokNoKwitansi').value = data.noKwitansi;
+    }
+    REGISTRATIONS = await sGet(KEYS.REGISTRATIONS, REGISTRATIONS);
+    const now = new Date().toISOString();
+    if(EDITING_LOK_ID){
+      const idx = REGISTRATIONS.findIndex(r=>r.id===EDITING_LOK_ID);
+      if(idx>=0) REGISTRATIONS[idx] = {...REGISTRATIONS[idx], ...data, updatedAt:now, updatedBy:CURRENT_USER.username};
+    }else{
+      const id = 'lok_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+      REGISTRATIONS.push({id, ...data, createdAt:now, createdBy:CURRENT_USER.username, updatedAt:now, updatedBy:CURRENT_USER.username});
+      EDITING_LOK_ID = id;
+    }
+    await sSet(KEYS.REGISTRATIONS, REGISTRATIONS);
+    toast('Pendaftaran berhasil disimpan.', 'ok');
+    logAudit('Simpan Pendaftaran Loket', `NIK ${data.nik} — ${data.nama}`);
+    document.getElementById('btnHapusLok').disabled = false;
+    document.getElementById('btnCetakInvoiceLok').disabled = false;
+    renderLoketList();
+  } finally {
+    SIMPAN_LOKET_BUSY = false;
+    if(btnSimpan) btnSimpan.disabled = false;
   }
-  await sSet(KEYS.REGISTRATIONS, REGISTRATIONS);
-  toast('Pendaftaran berhasil disimpan.', 'ok');
-  logAudit('Simpan Pendaftaran Loket', `NIK ${data.nik} — ${data.nama}`);
-  document.getElementById('btnHapusLok').disabled = false;
-  document.getElementById('btnCetakInvoiceLok').disabled = false;
-  renderLoketList();
 }
 function openRegistrasi(id){
   const rec = REGISTRATIONS.find(r=>r.id===id);
@@ -3295,6 +3535,9 @@ function openRegistrasi(id){
   document.getElementById('lokParamText').value = names.join('; ');
   document.getElementById('btnHapusLok').disabled = false;
   document.getElementById('btnCetakInvoiceLok').disabled = false;
+  // Pastikan sub-bagian Loket (Medis/Lingkungan) yang aktif cocok dengan kategori pendaftaran ini
+  // — kalau tidak, checkbox jenis pemeriksaannya akan tersembunyi karena difilter kategori lain.
+  CURRENT_LOKET_KATEGORI = isRegistrasiLingkungan(rec) ? 'lingkungan' : 'medis';
   renderJenisGroups();
   goView('loket');
 }
@@ -3420,6 +3663,7 @@ function renderLoketList(){
   if(!wrap) return;
   const q = (document.getElementById('lokSearchQ').value||'').toLowerCase().trim();
   let list = [...REGISTRATIONS].sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+  list = list.filter(r => isRegistrasiLingkungan(r) === (CURRENT_LOKET_KATEGORI==='lingkungan'));
   if(q) list = list.filter(r => (r.nik||'').includes(q) || (r.nama||'').toLowerCase().includes(q) || (r.noKwitansi||'').toLowerCase().includes(q) || (r.pemilik||'').toLowerCase().includes(q));
   if(list.length===0){ wrap.innerHTML = emptyStateHtml(q ? 'Tidak ditemukan pendaftaran yang sesuai.' : 'Belum ada pendaftaran loket.'); return; }
   const allowKirim = canEdit('loket');       // Admin Loket & Administrator: boleh kirim ke antrian setelah bayar
