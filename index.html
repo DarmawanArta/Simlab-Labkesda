@@ -731,6 +731,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
         Beranda
       </button>
+      <button class="nav-btn" data-view="cari" onclick="goView('cari')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Cari &amp; Daftar Data
+      </button>
+      <button class="nav-btn" data-view="loket" onclick="goView('loket')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
+        Loket Pendaftaran
+      </button>
       <button class="nav-btn nav-toggle" id="navHasilToggle" data-view="form" onclick="toggleNavHasil()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
         Input Hasil
@@ -747,14 +755,6 @@
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_borax_formalin" onclick="goFormKategori('lingkungan_borax_formalin')">Hasil Lingkungan Borax &amp; Formalin</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_salmonella" onclick="goFormKategori('lingkungan_salmonella')">Hasil Lingkungan Salmonella</button>
       </div>
-      <button class="nav-btn" data-view="cari" onclick="goView('cari')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        Cari &amp; Daftar Data
-      </button>
-      <button class="nav-btn" data-view="loket" onclick="goView('loket')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
-        Loket Pendaftaran
-      </button>
       <button class="nav-btn" data-view="rekap" onclick="goView('rekap')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 12V8M13 12v3M8 12v6"/></svg>
         Rekap Pemeriksaan
@@ -1013,9 +1013,9 @@
             <span class="hint">Ketik manual dan pisahkan dengan titik koma (;), atau klik "▾ Pilih" untuk mencentang beberapa nama sekaligus dari daftar tersimpan.</span>
           </div>
           <div class="field"><label>Tanggal Hasil</label><input type="date" id="pTglHasil" oninput="markDirty()"></div>
-          <div class="field"><label id="lblDokterPJ">Dokter Penanggung Jawab</label><input type="text" id="pDokterPJ" list="dlDokter" oninput="markDirty(); isiOtomatisNip();" placeholder="cth. dr. Fara Nayo F., M.Ked.Klin., Sp.MK"></div>
+          <div class="field"><label id="lblDokterPJ">Dokter Penanggung Jawab</label><select id="pDokterPJ" onchange="markDirty(); isiOtomatisNip();"><option value="">- Pilih -</option></select></div>
           <div class="field"><label id="lblNip">NIP Dokter</label><input type="text" id="pNip" oninput="markDirty()" placeholder="cth. NIP. 197711152024212003"></div>
-          <div class="field lingkungan-field-only hidden"><label>Kepala UPTD (Mengetahui)</label><input type="text" id="pKepalaUPTD" list="dlKepalaUPTD" oninput="markDirty(); isiOtomatisNipKepala();" placeholder="cth. Umi Widayati, S.Si"></div>
+          <div class="field lingkungan-field-only hidden"><label>Kepala UPTD (Mengetahui)</label><select id="pKepalaUPTD" onchange="markDirty(); isiOtomatisNipKepala();"><option value="">- Pilih -</option></select></div>
           <div class="field lingkungan-field-only hidden"><label>NIP Kepala UPTD</label><input type="text" id="pNipKepalaUPTD" oninput="markDirty()" placeholder="cth. 197103011998032005"></div>
           <div class="field" style="grid-column:1/-1;">
             <label style="display:flex;align-items:center;gap:8px;">
@@ -1043,8 +1043,6 @@
             <span class="hint">Berkas PDF akan tersimpan bersama data ini. Saat menekan "Cetak Hasil (A4)", halaman hasil akan digabung dengan halaman ASLI lampiran ini (perlu koneksi internet sesaat untuk memuat mesin penggabungnya) dan dibuka di tab baru siap dicetak/disimpan. Berkas asli yang Anda unggah tidak diubah/dikompres.</span>
           </div>
         </div>
-        <datalist id="dlDokter"></datalist>
-        <datalist id="dlKepalaUPTD"></datalist>
 
         <div class="form-actions">
           <button class="btn btn-primary" onclick="simpanData()" id="btnSimpanHasil">
@@ -2616,6 +2614,11 @@ function loadRecordToForm(rec){
   EDITING_ID = rec.id;
   CURRENT_FORM_SOURCE_REG_ID = rec.sourceRegId || null;
   CURRENT_HASIL_KATEGORI = rec.kategoriHasil || '';
+  // goView('form') dipindah ke sini (sebelum field-field di bawah diisi) karena ia memanggil
+  // renderDatalists() yang membangun ulang <select> Dokter PJ & Kepala UPTD dari nol — kalau
+  // dipanggil belakangan seperti sebelumnya, nilai yang baru saja kita pilih di bawah malah
+  // tertimpa balik ke "- Pilih -".
+  goView('form');
   document.getElementById('nomorLab').value = rec.nomorLab;
   document.getElementById('pNama').value = rec.nama;
   document.getElementById('pJK').value = rec.jk||'';
@@ -2626,7 +2629,7 @@ function loadRecordToForm(rec){
   document.getElementById('pTglPeriksa').value = rec.tglPeriksa||'';
   document.getElementById('pPemeriksa').value = rec.pemeriksa||'';
   document.getElementById('pTglHasil').value = rec.tglHasil||'';
-  document.getElementById('pDokterPJ').value = rec.dokterPJ||'';
+  setDokterPJValue(rec.dokterPJ||'');
   document.getElementById('pNip').value = rec.nip||'';
   document.getElementById('pLokasi').value = rec.lokasi||'';
   document.getElementById('pPetugasPemilik').value = rec.petugasPemilik||'';
@@ -2638,7 +2641,7 @@ function loadRecordToForm(rec){
   document.getElementById('pDiambilJam').value = rec.diambilJam||'';
   document.getElementById('pDiterimaTgl').value = rec.diterimaTgl||'';
   document.getElementById('pDiterimaJam').value = rec.diterimaJam||'';
-  document.getElementById('pKepalaUPTD').value = rec.kepalaUPTD||'';
+  setKepalaUPTDValue(rec.kepalaUPTD||'');
   document.getElementById('pNipKepalaUPTD').value = rec.nipKepalaUPTD||'';
   document.getElementById('pUseTtd').checked = !!rec.useTtd;
   document.getElementById('pUseStempel').checked = !!rec.useStempel;
@@ -2650,7 +2653,6 @@ function loadRecordToForm(rec){
   document.getElementById('paramFilter').value='';
   renderParamTable();
   document.getElementById('btnCetak').disabled = false;
-  goView('form');
 }
 
 function hapusData(){
@@ -2700,7 +2702,7 @@ async function checkDraft(){
       document.getElementById('pTglPeriksa').value = draft.tglPeriksa||'';
       document.getElementById('pPemeriksa').value = draft.pemeriksa||'';
       document.getElementById('pTglHasil').value = draft.tglHasil||'';
-      document.getElementById('pDokterPJ').value = draft.dokterPJ||'';
+      setDokterPJValue(draft.dokterPJ||'');
       document.getElementById('pNip').value = draft.nip||'';
       document.getElementById('pLokasi').value = draft.lokasi||'';
       document.getElementById('pPetugasPemilik').value = draft.petugasPemilik||'';
@@ -2712,7 +2714,7 @@ async function checkDraft(){
       document.getElementById('pDiambilJam').value = draft.diambilJam||'';
       document.getElementById('pDiterimaTgl').value = draft.diterimaTgl||'';
       document.getElementById('pDiterimaJam').value = draft.diterimaJam||'';
-      document.getElementById('pKepalaUPTD').value = draft.kepalaUPTD||'';
+      setKepalaUPTDValue(draft.kepalaUPTD||'');
       document.getElementById('pNipKepalaUPTD').value = draft.nipKepalaUPTD||'';
       document.getElementById('pUseTtd').checked = !!draft.useTtd;
       document.getElementById('pUseStempel').checked = !!draft.useStempel;
@@ -3409,12 +3411,31 @@ async function simpanPengaturan(){
   toast('Pengaturan berhasil disimpan.', 'ok');
   logAudit('Simpan Pengaturan', 'Memperbarui pengaturan umum instansi');
 }
+// Mengisi ulang opsi dropdown Dokter Penanggung Jawab & Kepala UPTD dari daftar nama yang
+// didaftarkan di Pengaturan Umum. Dipanggil setiap kali formulir Input Hasil dibuka, supaya
+// selalu mengikuti daftar terbaru. Nilai yang sedang terpilih TIDAK otomatis dijaga di sini —
+// lihat setDokterPJValue()/setKepalaUPTDValue() yang dipakai saat mengisi nilai field secara
+// terprogram (reset, ambil dari antrian, muat draft).
 function renderDatalists(){
-  const dlD = document.getElementById('dlDokter');
-  if(dlD) dlD.innerHTML = (SETTINGS.dokterList||[]).map(d=>`<option value="${escapeHtml(d.nama)}">`).join('');
-  const dlK = document.getElementById('dlKepalaUPTD');
-  if(dlK) dlK.innerHTML = (SETTINGS.kepalaUptdList||[]).map(d=>`<option value="${escapeHtml(d.nama)}">`).join('');
+  const selDokter = document.getElementById('pDokterPJ');
+  if(selDokter) selDokter.innerHTML = '<option value="">- Pilih -</option>' + (SETTINGS.dokterList||[]).map(d=>`<option value="${escapeHtml(d.nama)}">${escapeHtml(d.nama)}</option>`).join('');
+  const selKepala = document.getElementById('pKepalaUPTD');
+  if(selKepala) selKepala.innerHTML = '<option value="">- Pilih -</option>' + (SETTINGS.kepalaUptdList||[]).map(d=>`<option value="${escapeHtml(d.nama)}">${escapeHtml(d.nama)}</option>`).join('');
 }
+// Mengisi nilai dropdown Dokter PJ / Kepala UPTD secara terprogram (bukan lewat klik user) —
+// mis. saat membuka hasil lama atau memuat draft. Bila nama yang tersimpan sudah tidak ada lagi
+// di daftar Pengaturan Umum (dihapus/berganti), tetap ditambahkan sebagai opsi sementara supaya
+// data yang sudah tersimpan tidak kelihatan kosong/hilang di layar.
+function setSelectValueWithFallback(selectEl, val, list){
+  if(!selectEl) return;
+  const v = val || '';
+  if(v && !Array.from(selectEl.options).some(o=>o.value===v)){
+    selectEl.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(v)}">${escapeHtml(v)} (tidak terdaftar)</option>`);
+  }
+  selectEl.value = v;
+}
+function setDokterPJValue(val){ setSelectValueWithFallback(document.getElementById('pDokterPJ'), val, SETTINGS.dokterList); }
+function setKepalaUPTDValue(val){ setSelectValueWithFallback(document.getElementById('pKepalaUPTD'), val, SETTINGS.kepalaUptdList); }
 /* ---- Panel pilih banyak nama pemeriksa ---- */
 function toggleMsPanel(){
   const panel = document.getElementById('msPemeriksaPanel');
@@ -4514,7 +4535,11 @@ function buildDocHtml(){
   const data = collectFormData();
   const mainGroups = groupTwoLevel(data.params, p=>p.kategoriUtama, p=>p.kategori);
   const rows = mainGroups.map(mg=>{
-    const mainHeaderRow = mg.key ? `<tr><td colspan="3" class="doc-group doc-group-main">${escapeHtml(mg.key)}</td></tr>` : '';
+    // Judul kelompok "Parameter Manual (...)" (mis. "Parameter Manual (Rectal)") hanya label
+    // internal untuk memudahkan admin mengisi di layar Input Hasil — tidak perlu ikut tercetak
+    // di hasil, jadi barisnya disembunyikan khusus di sini (baris parameter/nama di bawahnya
+    // tetap tercetak seperti biasa).
+    const mainHeaderRow = (mg.key && !mg.key.startsWith('Parameter Manual')) ? `<tr><td colspan="3" class="doc-group doc-group-main">${escapeHtml(mg.key)}</td></tr>` : '';
     const subRows = mg.subgroups.map(group=>{
       const headerRow = group.key ? `<tr><td colspan="3" class="doc-group${mg.key?' doc-group-sub':''}">${escapeHtml(group.key)}</td></tr>` : '';
       const itemRows = group.items.map(p=>{
