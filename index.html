@@ -373,7 +373,10 @@
   .padmin-row{display:grid;grid-template-columns:1.3fr 0.9fr 0.9fr 1.2fr 0.8fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);}
   .padmin-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;}
   .padmin-head{display:grid;grid-template-columns:1.3fr 0.9fr 0.9fr 1.2fr 0.8fr auto;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line-strong);}
-  .jharga-row{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);}
+  .jharga-row{display:grid;grid-template-columns:1fr 1.4fr 160px auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);}
+  .jharga-head.padmin-head{grid-template-columns:1fr 1.4fr 160px auto;}
+  .jharga-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;}
+  .jharga-row input[type="number"]{text-align:right;}
   /* ---------- Kelola Parameter: tab ala "sheet" (mis. tab bawah Excel/Google Sheets) ---------- */
   .sheet-tabs{display:flex;gap:2px;margin-bottom:-1px;position:relative;z-index:1;}
   .sheet-tab{display:flex;align-items:center;gap:7px;padding:10px 18px;border:1px solid var(--line-strong);border-bottom:none;border-radius:10px 10px 0 0;background:var(--bg);color:var(--ink-soft);font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font-display);}
@@ -381,6 +384,14 @@
   .sheet-tab.active{background:var(--surface);color:var(--primary-dark);box-shadow:0 -2px 8px rgba(0,0,0,.04);}
   .sheet-tab:not(.active):hover{background:var(--primary-100);}
   .sheet-tab-panel .card:first-child{border-top-left-radius:0;}
+  /* ---------- Loket Mikromedis: daftar banyak nama sekaligus ---------- */
+  .mikro-rows{display:flex;flex-direction:column;gap:6px;}
+  .mikro-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .mikro-row .mikro-no{width:22px;flex:none;font-size:12px;color:var(--ink-faint);text-align:center;font-weight:700;}
+  .mikro-row input{border:1px solid var(--line-strong);border-radius:8px;padding:8px 10px;font-size:13.5px;background:var(--surface);color:var(--ink);}
+  .mikro-row input[data-f="nama"]{flex:1 1 220px;min-width:160px;}
+  .mikro-row input[data-f="nik"]{flex:0 1 170px;min-width:130px;}
+  .mikro-row .btn{flex:none;}
   /* Toolbar pencarian & pilihan jumlah baris per halaman, di atas tabel Daftar Parameter */
   .padmin-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;}
   .padmin-toolbar input[type="text"]{flex:1 1 260px;min-width:180px;}
@@ -392,9 +403,6 @@
   .padmin-pagination .pages button{min-width:32px;padding:5px 9px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;}
   .padmin-pagination .pages button.active{background:var(--primary);border-color:var(--primary);color:#fff;}
   .padmin-pagination .pages button:disabled{opacity:.4;cursor:not-allowed;}
-  .jharga-row .jharga-nama{font-weight:600;font-size:13.5px;}
-  .jharga-row .jharga-nama small{display:block;font-weight:400;color:var(--ink-faint);font-size:11px;}
-  .jharga-row input{padding:7px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;text-align:right;}
   /* Baris admin TTD/Stempel (dipakai bersama oleh Daftar Dokter & Daftar Kepala UPTD) — flex-wrap
      supaya tombol pilihan Warna/Hitam Putih yang baru ditambahkan tidak bikin baris meluber. */
   .spesimen-admin-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);}
@@ -450,6 +458,7 @@
     table.param-table{font-size:12px;}
     .padmin-head{display:none;}
     .padmin-row{grid-template-columns:1fr;background:var(--bg);border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid var(--line);}
+    .jharga-row{grid-template-columns:1fr;background:var(--bg);border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid var(--line);}
   }
   /* Layar sedang (tablet/laptop kecil): sidebar tetap tampil tapi sedikit lebih ramping supaya
      konten utama tidak terlalu sempit — sebelumnya lebar sidebar tetap 230px di semua ukuran
@@ -730,6 +739,7 @@
       <div class="nav-subgroup" id="navHasilSub">
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="" onclick="goFormKategori('')">Semua Hasil</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="medis" onclick="goFormKategori('medis')">Hasil Medis</button>
+        <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="mikromedis" onclick="goFormKategori('mikromedis')">Hasil Mikromedis</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_makanan" onclick="goFormKategori('lingkungan_makanan')">Hasil Lingkungan Makanan</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_minuman" onclick="goFormKategori('lingkungan_minuman')">Hasil Lingkungan Minuman</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_air_bersih" onclick="goFormKategori('lingkungan_air_bersih')">Hasil Lingkungan Air Bersih</button>
@@ -741,13 +751,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         Cari &amp; Daftar Data
       </button>
-      <button class="nav-btn nav-btn-loket-kat" data-view="loket" data-loketkat="medis" onclick="goLoketKategori('medis')">
+      <button class="nav-btn" data-view="loket" onclick="goView('loket')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
-        Pendaftaran Medis
-      </button>
-      <button class="nav-btn nav-btn-loket-kat" data-view="loket" data-loketkat="lingkungan" onclick="goLoketKategori('lingkungan')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4v6M7 4h6M17 14v6M7 14h6"/></svg>
-        Pendaftaran Lingkungan
+        Loket Pendaftaran
       </button>
       <button class="nav-btn" data-view="rekap" onclick="goView('rekap')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 12V8M13 12v3M8 12v6"/></svg>
@@ -1076,12 +1082,27 @@
 
     <!-- ============ LOKET PENDAFTARAN ============ -->
     <div id="view-loket" class="view hidden">
+      <div class="sheet-tabs">
+        <button class="sheet-tab active" id="sheetTabBtnLoketMedis" onclick="switchLoketTab('medis')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Loket Medis
+        </button>
+        <button class="sheet-tab" id="sheetTabBtnLoketLingkungan" onclick="switchLoketTab('lingkungan')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Loket Lingkungan
+        </button>
+        <button class="sheet-tab" id="sheetTabBtnLoketMikromedis" onclick="switchLoketTab('mikromedis')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><path d="M12.5 15.5h4a3.5 3.5 0 0 1 3.5 3.5v2"/><circle cx="17" cy="10.5" r="2.75"/></svg>
+          Loket Mikromedis
+        </button>
+      </div>
+      <div class="sheet-tab-panel">
       <div class="card card-pad" style="margin-bottom:16px;">
         <div class="section-title"><span class="num">1</span> Pendaftaran Pasien Baru</div>
         <div class="section-desc">Isi data pasien saat mendaftar di loket. Data ini bisa langsung dilanjutkan ke menu Input Hasil oleh petugas laboratorium.</div>
         <input type="hidden" id="lokId">
         <div class="grid-2">
-          <div class="field"><label>Nomor Kwitansi</label><input type="text" id="lokNoKwitansi" placeholder="(otomatis saat disimpan)" readonly style="background:var(--bg);cursor:not-allowed;"></div>
+          <div class="field" id="lokNoKwitansiFieldWrap"><label>Nomor Kwitansi</label><input type="text" id="lokNoKwitansi" placeholder="(otomatis saat disimpan)" readonly style="background:var(--bg);cursor:not-allowed;"></div>
           <div class="field"><label class="req">Jenis Pendaftaran</label>
             <select id="lokKategoriLoket">
               <option value="berbayar_tunai">Berbayar Tunai</option>
@@ -1090,18 +1111,36 @@
               <option value="gratis">Gratis</option>
             </select>
           </div>
+          <div id="lokSingleNameFields" style="display:contents">
           <div class="field"><label>NIK <span class="hint" style="font-weight:400;">(opsional — boleh dikosongkan untuk pemeriksaan lingkungan/instansi)</span></label><input type="text" id="lokNik" maxlength="16" placeholder="16 digit NIK, kosongkan bila tidak ada" oninput="this.value=this.value.replace(/\D/g,'')"></div>
           <div class="field"><label class="req">Nama Pasien</label><input type="text" id="lokNama"></div>
           <div class="field"><label>Tanggal Lahir</label><input type="date" id="lokTglLahir" oninput="hitungUsiaLoket()"></div>
           <div class="field"><label>Usia</label><input type="text" id="lokUsia" placeholder="Otomatis dari tanggal lahir"></div>
           <div class="field"><label>Jenis Kelamin</label><select id="lokJK"><option value="">- Pilih -</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+          </div>
           <div class="field" style="grid-column:1/-1;"><label>Alamat</label><textarea id="lokAlamat"></textarea></div>
           <div class="field"><label>No. Telepon</label><input type="text" id="lokTlp" placeholder="cth. 0812xxxxxxx"></div>
-          <div class="field"><label>Pemilik Instansi <span class="hint" style="font-weight:400;">(opsional — untuk pemeriksaan lingkungan/institusi)</span></label><input type="text" id="lokPemilik" placeholder="cth. PT Sumber Rejeki / Puskesmas X"></div>
+          <div class="field"><label id="lokPemilikLabel"><span id="lokPemilikLabelText">Pemilik Instansi</span> <span class="hint" style="font-weight:400;" id="lokPemilikHint">(opsional — untuk pemeriksaan lingkungan/institusi)</span></label><input type="text" id="lokPemilik" placeholder="cth. PT Sumber Rejeki / Puskesmas X"></div>
+        </div>
+
+        <div class="field hidden" id="lokMikroBatchWrap">
+          <label class="req">Daftar Nama (Loket Mikromedis)</label>
+          <span class="hint" style="font-weight:400;display:block;margin-bottom:8px;">Tambahkan satu baris untuk setiap orang yang diperiksa (mis. rectal swab penjamah makanan) — bisa lebih dari 10 nama sekaligus. Isi juga "Nama Instansi / Kelompok" di atas — seluruh nama di bawah ini akan disimpan sebagai <b>1 pendaftaran &amp; 1 nomor kwitansi</b> (1 kali pembayaran) atas nama instansi tersebut, dengan setiap nama menjadi baris sampel/parameter sendiri saat diproses ke Input Hasil.</span>
+          <div id="lokMikroRows" class="mikro-rows"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="btn btn-sm btn-outline" onclick="tambahBarisMikro(1)">+ Tambah Baris</button>
+            <button type="button" class="btn btn-sm btn-outline" onclick="tambahBarisMikro(5)">+ Tambah 5 Baris</button>
+            <span class="hint">Total nama terisi: <b id="lokMikroCount">0</b></span>
+          </div>
+          <div style="margin-top:14px;border-top:1px dashed var(--line-strong);padding-top:12px;">
+            <label style="font-size:12.5px;font-weight:600;color:var(--ink-soft);">Tempel Banyak Nama Sekaligus <span class="hint" style="font-weight:400;">(opsional — satu nama per baris, boleh format "Nama, NIK")</span></label>
+            <textarea id="lokMikroBulkText" rows="3" placeholder="cth:&#10;Siti Aminah&#10;Budi Santoso, 3578012345670001&#10;Rina Wulandari"></textarea>
+            <button type="button" class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="tambahMikroDariTempel()">Tambahkan ke Daftar</button>
+          </div>
         </div>
 
         <div class="section-title" style="margin-top:8px;"><span class="num">2</span> Jenis Pemeriksaan</div>
-        <div class="section-desc">Centang satu atau lebih jenis pemeriksaan yang diminta. Daftar ini bisa ditambah lewat menu Pengaturan Umum.</div>
+        <div class="section-desc">Centang satu atau lebih jenis pemeriksaan yang diminta. Daftar ini bisa ditambah lewat menu kelolah parameter.</div>
         <div class="jenis-groups" id="lokJenisGroups"></div>
 
         <div class="section-title" style="margin-top:18px;"><span class="num">3</span> Parameter yang Diperiksa</div>
@@ -1113,9 +1152,9 @@
         </div>
 
         <div class="field" style="margin-top:14px;" id="lokParamManualWrap">
-          <label>Sampel per Jenis Pemeriksaan Lingkungan <span class="hint" style="font-weight:400;">(otomatis muncul untuk setiap jenis Lingkungan yang dicentang di atas)</span></label>
+          <label id="lokParamManualLabel"><span id="lokParamManualLabelText">Sampel per Jenis Pemeriksaan Lingkungan</span> <span class="hint" style="font-weight:400;" id="lokParamManualLabelHint">(otomatis muncul untuk setiap jenis Lingkungan yang dicentang di atas)</span></label>
           <div id="lokParamManualGroups"></div>
-          <span class="hint">Setiap sampel akan masuk ke menu Hasil Lingkungan sesuai jenisnya masing-masing (mis. sampel di kolom "Lingkungan &gt; Makanan" hanya akan muncul di menu Hasil Lingkungan Makanan).</span>
+          <span class="hint" id="lokParamManualFootHint">Setiap sampel akan masuk ke menu Hasil Lingkungan sesuai jenisnya masing-masing (mis. sampel di kolom "Lingkungan &gt; Makanan" hanya akan muncul di menu Hasil Lingkungan Makanan).</span>
         </div>
 
         <div class="field" style="margin-top:14px;background:var(--primary-100);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
@@ -1140,6 +1179,7 @@
           <input type="text" id="lokSearchQ" placeholder="Cari NIK atau Nama Pasien…" oninput="renderLoketList()">
         </div>
         <div id="lokList"></div>
+      </div>
       </div>
     </div>
 
@@ -1222,15 +1262,17 @@
 
       <div id="paramTabHarga" class="sheet-tab-panel hidden">
         <div class="card card-pad">
-          <div class="section-title">Harga per Jenis Pemeriksaan</div>
-          <div class="section-desc">Terutama untuk pemeriksaan lingkungan yang biayanya dihitung per sampel/jenis (bukan per parameter satuan), mis. "Lingkungan &gt; Makanan". Harga di sini otomatis terhitung di Loket Pendaftaran saat jenis pemeriksaan itu dicentang. Daftar jenisnya sendiri diatur lewat menu Pengaturan Umum.</div>
+          <div class="section-title">Jenis Pemeriksaan Loket &amp; Harganya</div>
+          <div class="section-desc">Daftar jenis pemeriksaan yang muncul sebagai pilihan centang di menu Loket Pendaftaran, sekaligus harganya — dulu daftar jenisnya diatur terpisah di Pengaturan Umum, sekarang digabung di sini supaya jenis & harganya selalu sinkron (mengubah nama jenis tidak lagi membuat harganya hilang/ketuker). Isi <b>Kelompok</b> untuk sub-jenis (mis. "Lingkungan"), atau kosongkan bila jenisnya berdiri sendiri (mis. "Medis"). Terutama dipakai untuk pemeriksaan yang biayanya dihitung per sampel/jenis, bukan per parameter satuan.</div>
           <div class="locked-note hidden" id="jenisHargaLockedNote">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Mode lihat saja.
           </div>
+          <div class="padmin-head jharga-head"><div>Kelompok</div><div>Nama Jenis</div><div>Harga (Rp)</div><div></div></div>
           <div id="jenisHargaList"></div>
+          <button type="button" class="btn btn-outline" id="btnTambahJenis" style="margin-top:14px;" onclick="tambahJenisBaris()">+ Tambah Jenis Pemeriksaan</button>
           <div class="form-actions">
-            <button class="btn btn-primary" id="btnSimpanJenisHarga" onclick="simpanJenisHarga()">Simpan Harga Jenis Pemeriksaan</button>
+            <button class="btn btn-primary" id="btnSimpanJenisHarga" onclick="simpanJenisHarga()">Simpan Jenis &amp; Harga Pemeriksaan</button>
           </div>
         </div>
       </div>
@@ -1277,10 +1319,6 @@
               <button type="button" id="btnResetNoKwitansi" class="btn btn-outline btn-sm" onclick="resetCounterNoKwitansi()">Reset ke Nomor Ini</button>
             </div>
             <span class="hint">Nomor kwitansi dibuat otomatis & berurutan (tersambung antara Pendaftaran Medis dan Lingkungan — satu nomor urut yang sama, bukan dua nomor urut terpisah), dan langsung terkunci begitu tombol "Simpan" ditekan supaya tidak ada 2 pendaftaran yang kebagian nomor sama walau disimpan hampir bersamaan. Ubah angka di atas lalu klik "Reset ke Nomor Ini" hanya kalau memang perlu mengatur ulang mulai dari nomor tertentu (mis. ganti tahun) — mengubah angka saja tanpa klik reset TIDAK mengubah apa pun.</span>
-          </div>
-          <div class="field" style="grid-column:1/-1;"><label>Daftar Jenis Pemeriksaan Loket (satu per baris)</label>
-            <textarea id="setJenisList" rows="6" placeholder="Medis&#10;Mikrobiologi &gt; Rectal&#10;Lingkungan &gt; Makanan&#10;Lingkungan &gt; Air Bersih"></textarea>
-            <span class="hint">Tulis satu baris untuk jenis berdiri sendiri (mis. "Medis"), atau format "Kelompok &gt; Nama" untuk sub-jenis (mis. "Lingkungan &gt; Air Minum"). Daftar ini yang muncul sebagai pilihan centang pada menu Loket Pendaftaran.</span>
           </div>
           <div class="field" style="grid-column:1/-1;"><label>Daftar Nama Pemeriksa (satu nama per baris)</label>
             <textarea id="setPemeriksaList" rows="4" placeholder="Ajeng Prameswari, A.Md.AK&#10;Agita Fortuna Septa N., A.Md.Kes"></textarea>
@@ -1563,6 +1601,12 @@ function isLoketGratis(r){ return kategoriLoketOf(r) === 'gratis'; }
 function kategoriLoketLabel(r){ return KATEGORI_LOKET_LABEL[kategoriLoketOf(r)] || 'Berbayar Tunai'; }
 const KATEGORI_HASIL_MAP = {
   medis:                     { label:'Hasil Medis', keywords:['medis'] },
+  // Tanpa "format hasil" khusus untuk sekarang (dipakai isLK=false yang sama seperti Hasil Medis
+  // di applyKategoriFormMode — formulir & cetakan masih memakai format Medis biasa). Dicocokkan
+  // lewat asal loket (loketAsal==='mikromedis'), BUKAN lewat kata kunci jenis pemeriksaan, karena
+  // sheet Loket Mikromedis memakai daftar jenis pemeriksaan yang sama dengan Loket Medis — lihat
+  // isRegistrasiMikromedis() & jenisCocokKategori().
+  mikromedis:                { label:'Hasil Mikromedis', keywords:[] },
   lingkungan_makanan:        { label:'Hasil Lingkungan Makanan', keywords:['makanan'], jenisContoh:'Makanan', jenisPengujian:'Mikrobiologi', metodeDefault:'Pembiakan', referensiDefault:'PERMENKES RI NO.1096/MENKES/PER/VI/2011' },
   lingkungan_minuman:        { label:'Hasil Lingkungan Minuman', keywords:['minuman','air minum'], jenisContoh:'Air Minum', jenisPengujian:'Mikrobiologi', metodeDefault:'Pembiakan', referensiDefault:'PERMENKES RI NO.1096/MENKES/PER/VI/2011' },
   lingkungan_air_bersih:     { label:'Hasil Lingkungan Air Bersih', keywords:['air bersih'], jenisContoh:'Air Bersih', jenisPengujian:'', metodeDefault:'', referensiDefault:'' },
@@ -1593,8 +1637,14 @@ function applyKategoriFormMode(){
     if(!document.getElementById('pReferensiRegulasi').value) document.getElementById('pReferensiRegulasi').value = info.referensiDefault||'';
   }
 }
-function jenisCocokKategori(jenisList, kategoriKey){
+function jenisCocokKategori(jenisList, kategoriKey, rec){
   if(!kategoriKey) return true; // "Semua Hasil" — tidak difilter
+  // Kategori Mikromedis dicocokkan lewat asal loketnya (bukan kata kunci jenis pemeriksaan),
+  // karena sheet Loket Mikromedis memakai daftar jenis pemeriksaan yang sama dengan Loket Medis.
+  if(kategoriKey==='mikromedis') return !!(rec && isRegistrasiMikromedis(rec));
+  // Supaya tidak dobel tampil di kedua menu: pendaftaran dari sheet Mikromedis tidak lagi
+  // dianggap cocok untuk kategori "medis" biasa walau kebetulan jenis pemeriksaannya sama.
+  if(kategoriKey==='medis' && rec && isRegistrasiMikromedis(rec)) return false;
   const kw = KATEGORI_HASIL_MAP[kategoriKey]?.keywords || [];
   return (jenisList||[]).some(j => kw.some(k => (j||'').toLowerCase().includes(k)));
 }
@@ -1602,13 +1652,41 @@ function goFormKategori(kategori){
   CURRENT_HASIL_KATEGORI = kategori || '';
   goView('form');
 }
-// Ganti sub-bagian Loket Pendaftaran (Medis / Lingkungan). Karena pindah kategori berarti pindah
-// konteks pendaftaran yang berbeda, formulir loket ikut direset ke kosong (form baru) supaya
-// isian dari kategori sebelumnya tidak kebawa/ketuker.
-function goLoketKategori(kategori){
+// Ganti sheet Loket Pendaftaran (Medis / Lingkungan) — dipanggil dari tab di dalam menu Loket
+// Pendaftaran (bukan dari sidebar lagi, supaya tidak makan 2 baris menu di sidebar). Karena
+// pindah sheet berarti pindah konteks pendaftaran yang berbeda, formulir loket ikut direset ke
+// kosong (form baru) supaya isian dari sheet sebelumnya tidak kebawa/ketuker.
+function switchLoketTab(kategori){
   CURRENT_LOKET_KATEGORI = kategori || 'medis';
   EDITING_LOK_ID = null;
-  goView('loket');
+  document.getElementById('sheetTabBtnLoketMedis').classList.toggle('active', CURRENT_LOKET_KATEGORI==='medis');
+  document.getElementById('sheetTabBtnLoketLingkungan').classList.toggle('active', CURRENT_LOKET_KATEGORI==='lingkungan');
+  document.getElementById('sheetTabBtnLoketMikromedis').classList.toggle('active', CURRENT_LOKET_KATEGORI==='mikromedis');
+  lokFormBaru(false);
+  renderJenisGroups();
+  renderLoketList();
+}
+// Menampilkan/menyembunyikan bagian formulir satu-nama (NIK/Nama/Tgl Lahir/dst, termasuk Nomor
+// Kwitansi) vs bagian daftar banyak nama Mikromedis, sesuai MIKRO_BATCH_MODE saat ini.
+function applyLoketSheetMode(){
+  const single = document.getElementById('lokSingleNameFields');
+  const noKw = document.getElementById('lokNoKwitansiFieldWrap');
+  const batch = document.getElementById('lokMikroBatchWrap');
+  if(single) single.classList.toggle('hidden', MIKRO_BATCH_MODE);
+  if(noKw) noKw.classList.toggle('hidden', MIKRO_BATCH_MODE);
+  if(batch) batch.classList.toggle('hidden', !MIKRO_BATCH_MODE);
+  const btnSimpan = document.getElementById('btnSimpanLoket');
+  if(btnSimpan) btnSimpan.textContent = MIKRO_BATCH_MODE ? 'Simpan Semua Pendaftaran' : 'Simpan Pendaftaran';
+  // Di sheet Mikromedis, "Pemilik Instansi" berubah jadi kolom wajib "Nama Instansi / Kelompok" —
+  // inilah yang dipakai sebagai nama pendaftaran & kwitansi tunggal untuk seluruh nama di bawahnya.
+  const pemilikLabel = document.getElementById('lokPemilikLabel');
+  const pemilikText = document.getElementById('lokPemilikLabelText');
+  const pemilikHint = document.getElementById('lokPemilikHint');
+  if(pemilikLabel) pemilikLabel.classList.toggle('req', MIKRO_BATCH_MODE);
+  if(pemilikText) pemilikText.textContent = MIKRO_BATCH_MODE ? 'Nama Instansi / Kelompok' : 'Pemilik Instansi';
+  if(pemilikHint) pemilikHint.textContent = MIKRO_BATCH_MODE
+    ? '(wajib — dipakai sebagai nama pendaftaran & nomor kwitansi tunggal untuk semua nama di Daftar Nama)'
+    : '(opsional — untuk pemeriksaan lingkungan/institusi)';
 }
 function toggleNavHasil(forceOpen){
   const sub = document.getElementById('navHasilSub');
@@ -2153,17 +2231,14 @@ function goView(name){
   document.querySelectorAll('.nav-btn').forEach(b=>{
     if(b.classList.contains('nav-btn-hasil-kat')){
       b.classList.toggle('active', name==='form' && b.dataset.kategori === (CURRENT_HASIL_KATEGORI||''));
-    }else if(b.classList.contains('nav-btn-loket-kat')){
-      b.classList.toggle('active', name==='loket' && b.dataset.loketkat === CURRENT_LOKET_KATEGORI);
     }else{
       b.classList.toggle('active', b.dataset.view===name);
     }
   });
   toggleNavHasil(name==='form');
   const kategoriInfo = (name==='form' && CURRENT_HASIL_KATEGORI) ? KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI] : null;
-  const loketTitle = name==='loket' ? (CURRENT_LOKET_KATEGORI==='lingkungan' ? 'Pendaftaran Lingkungan' : 'Pendaftaran Medis') : null;
-  document.getElementById('pageTitle').textContent = kategoriInfo ? kategoriInfo.label : (loketTitle || (VIEW_META[name]?.title || ''));
-  document.getElementById('pageSub').textContent = kategoriInfo ? 'Antrian & pengisian hasil untuk kategori ini' : (loketTitle ? `Pendaftaran loket khusus kategori ${CURRENT_LOKET_KATEGORI}` : (VIEW_META[name]?.sub || ''));
+  document.getElementById('pageTitle').textContent = kategoriInfo ? kategoriInfo.label : (VIEW_META[name]?.title || '');
+  document.getElementById('pageSub').textContent = kategoriInfo ? 'Antrian & pengisian hasil untuk kategori ini' : (VIEW_META[name]?.sub || '');
   closeSidebar();
   if(name==='dashboard') renderDashboard();
   if(name==='cari') renderSearchResults();
@@ -2296,29 +2371,41 @@ function renderParamTable(){
       });
     });
   });
-  // Baris tambahan dari "Parameter Manual" Loket (khusus lingkungan/di luar daftar induk) —
-  // selalu tercentang & tidak bisa dilepas centangnya, hanya nilai hasilnya yang bisa diisi.
+  // Baris tambahan dari "Parameter Manual" Loket (mis. sampel Lingkungan, atau nama-nama dari
+  // Loket Mikromedis) — selalu tercentang & tidak bisa dilepas centangnya, hanya nilai hasilnya
+  // yang bisa diisi. Dikelompokkan berdasarkan kategoriUtama ASLI-nya (mis. "Parameter Manual
+  // (Rectal)" untuk nama-nama Mikromedis, "Parameter Manual (Makanan)" untuk sampel Lingkungan
+  // Makanan, dst) — supaya tiap nama/sampel tetap tampil sebagai baris sendiri-sendiri, tapi
+  // jelas terlihat satu kelompok/rombongan sesuai jenis pemeriksaannya, bukan digabung rata di
+  // bawah satu judul generik.
   const manualEntries = Object.entries(CURRENT_FORM_PARAMS).filter(([id,v])=>v.manual && v.dipilih);
   if(manualEntries.length>0){
-    const mtr = document.createElement('tr');
-    mtr.innerHTML = `<td colspan="5" class="param-group-row param-group-main">Parameter Manual (Lingkungan)</td>`;
-    tbody.appendChild(mtr);
-    manualEntries.forEach(([id,existing])=>{
-      checkedCount++;
-      const fieldDisabled = isAnalis ? 'disabled' : '';
-      const tr = document.createElement('tr');
-      tr.className = 'checked';
-      tr.innerHTML = `
-        <td><input type="checkbox" class="chk" checked disabled title="Parameter manual dari pendaftaran Loket — tidak bisa dilepas centangnya"></td>
-        <td class="pname">${escapeHtml(existing.nama)}</td>
-        <td>
-          <input type="text" id="hasilInput-${id}" style="${existing.abnormal?'font-weight:800;':''}" ${fieldDisabled} value="${escapeHtml(existing.hasil||'')}" oninput="setParamField('${id}','hasil',this.value)" placeholder="Hasil">
-          <label class="abnormal-toggle"><input type="checkbox" ${fieldDisabled} ${existing.abnormal?'checked':''} onchange="toggleParamAbnormal('${id}', this.checked)"> Tebalkan (di luar rujukan)</label>
-        </td>
-        <td><input type="text" ${fieldDisabled} value="${escapeHtml(existing.rujukan||'')}" oninput="setParamField('${id}','rujukan',this.value)" placeholder="cth. 70–100 mg/dL"></td>
-        <td><input type="text" ${fieldDisabled} value="${escapeHtml(existing.keterangan||'')}" oninput="setParamField('${id}','keterangan',this.value)" placeholder="Opsional"></td>
-      `;
-      tbody.appendChild(tr);
+    const manualGroups = {};
+    manualEntries.forEach(([id,v])=>{
+      const key = v.kategoriUtama || 'Parameter Manual';
+      (manualGroups[key] = manualGroups[key] || []).push([id,v]);
+    });
+    Object.entries(manualGroups).forEach(([label, entries])=>{
+      const mtr = document.createElement('tr');
+      mtr.innerHTML = `<td colspan="5" class="param-group-row param-group-main">${escapeHtml(label)}</td>`;
+      tbody.appendChild(mtr);
+      entries.forEach(([id,existing])=>{
+        checkedCount++;
+        const fieldDisabled = isAnalis ? 'disabled' : '';
+        const tr = document.createElement('tr');
+        tr.className = 'checked';
+        tr.innerHTML = `
+          <td><input type="checkbox" class="chk" checked disabled title="Parameter manual dari pendaftaran Loket — tidak bisa dilepas centangnya"></td>
+          <td class="pname">${escapeHtml(existing.nama)}</td>
+          <td>
+            <input type="text" id="hasilInput-${id}" style="${existing.abnormal?'font-weight:800;':''}" ${fieldDisabled} value="${escapeHtml(existing.hasil||'')}" oninput="setParamField('${id}','hasil',this.value)" placeholder="Hasil">
+            <label class="abnormal-toggle"><input type="checkbox" ${fieldDisabled} ${existing.abnormal?'checked':''} onchange="toggleParamAbnormal('${id}', this.checked)"> Tebalkan (di luar rujukan)</label>
+          </td>
+          <td><input type="text" ${fieldDisabled} value="${escapeHtml(existing.rujukan||'')}" oninput="setParamField('${id}','rujukan',this.value)" placeholder="cth. 70–100 mg/dL"></td>
+          <td><input type="text" ${fieldDisabled} value="${escapeHtml(existing.keterangan||'')}" oninput="setParamField('${id}','keterangan',this.value)" placeholder="Opsional"></td>
+        `;
+        tbody.appendChild(tr);
+      });
     });
   }
   document.getElementById('paramCount').textContent = checkedCount + ' dipilih';
@@ -2868,10 +2955,18 @@ function gotoParamAdminPage(p){
   PARAM_ADMIN_PAGE = p;
   drawParamAdmin();
 }
-/* ---- Harga per Jenis Pemeriksaan (Lingkungan, dsb) ---- */
-let JENIS_HARGA_DRAFT = {};
+/* ---- Jenis Pemeriksaan Loket & Harganya (dulu terpisah: daftar jenis di Pengaturan Umum, harga
+   di sini — sekarang digabung 1 tempat, supaya rename nama jenis tidak membuat harganya "hilang"
+   seperti sebelumnya). JENIS_DRAFT = array baris {kelompok, nama, harga}, bukan lagi dict harga
+   per nama-lengkap — jadi harga ikut menempel ke barisnya sendiri walau namanya diubah. */
+let JENIS_DRAFT = [];
 function renderJenisHargaAdmin(){
-  JENIS_HARGA_DRAFT = {...(SETTINGS.jenisHarga||{})};
+  const harga = SETTINGS.jenisHarga||{};
+  JENIS_DRAFT = parseJenisList().flatMap(g=>g.items.map(nama=>({
+    kelompok: g.key||'',
+    nama,
+    harga: harga[jenisFullName(g.key, nama)] || 0,
+  })));
   drawJenisHargaAdmin();
 }
 function drawJenisHargaAdmin(){
@@ -2881,29 +2976,46 @@ function drawJenisHargaAdmin(){
   const hargaOnly = !fullEdit && canEdit('keuangan');
   const editable = fullEdit || hargaOnly;
   const dis = editable ? '' : 'disabled';
+  const disNama = fullEdit ? '' : 'disabled'; // Peran Keuangan hanya boleh ubah Harga, bukan nama/kelompok
   const note = document.getElementById('jenisHargaLockedNote');
   if(note) note.classList.toggle('hidden', editable);
   const saveBtn = document.getElementById('btnSimpanJenisHarga');
   if(saveBtn) saveBtn.style.display = editable ? '' : 'none';
-  const groups = parseJenisList();
-  if(groups.length===0){ wrap.innerHTML = '<div class="hint">Belum ada jenis pemeriksaan. Tambahkan lewat menu Pengaturan Umum.</div>'; return; }
-  wrap.innerHTML = groups.map(g=>g.items.map(nama=>{
-    const full = jenisFullName(g.key, nama);
-    const val = JENIS_HARGA_DRAFT[full] || 0;
-    return `
-      <div class="jharga-row">
-        <div class="jharga-nama">${escapeHtml(nama)}${g.key ? `<small>${escapeHtml(g.key)}</small>` : ''}</div>
-        <input type="number" min="0" step="5000" ${dis} value="${val}" oninput="JENIS_HARGA_DRAFT['${full.replace(/'/g,"\\'")}']=Number(this.value)||0">
-      </div>`;
-  }).join('')).join('');
+  const addBtn = document.getElementById('btnTambahJenis');
+  if(addBtn) addBtn.style.display = fullEdit ? '' : 'none';
+  if(JENIS_DRAFT.length===0){ wrap.innerHTML = '<div class="hint" style="padding:14px 0;">Belum ada jenis pemeriksaan. Klik "+ Tambah Jenis Pemeriksaan" di bawah.</div>'; return; }
+  wrap.innerHTML = JENIS_DRAFT.map((r,i)=>`
+    <div class="jharga-row">
+      <input type="text" ${disNama} value="${escapeHtml(r.kelompok)}" oninput="JENIS_DRAFT[${i}].kelompok=this.value" placeholder="cth. Lingkungan (boleh kosong)">
+      <input type="text" ${disNama} value="${escapeHtml(r.nama)}" oninput="JENIS_DRAFT[${i}].nama=this.value" placeholder="cth. Air Minum">
+      <input type="number" ${dis} min="0" step="5000" value="${r.harga||0}" oninput="JENIS_DRAFT[${i}].harga=Number(this.value)||0">
+      <button type="button" class="btn btn-sm btn-danger" onclick="hapusJenisBaris(${i})" ${fullEdit?'':'disabled'}>Hapus</button>
+    </div>`).join('');
+}
+function tambahJenisBaris(){
+  if(!guardEdit('parameter')) return;
+  JENIS_DRAFT.push({kelompok:'', nama:'', harga:0});
+  drawJenisHargaAdmin();
+}
+function hapusJenisBaris(i){
+  if(!guardEdit('parameter')) return;
+  JENIS_DRAFT.splice(i,1);
+  drawJenisHargaAdmin();
 }
 async function simpanJenisHarga(){
   if(!canEdit('parameter') && !canEdit('keuangan')){ toast('Peran Anda tidak memiliki izin untuk menyimpan perubahan ini.', 'err'); return; }
+  const baris = JENIS_DRAFT.filter(r=>(r.nama||'').trim());
+  const jenisList = baris.map(r => r.kelompok.trim() ? `${r.kelompok.trim()} > ${r.nama.trim()}` : r.nama.trim());
+  const jenisHarga = {};
+  baris.forEach(r=>{ jenisHarga[jenisFullName(r.kelompok.trim(), r.nama.trim())] = r.harga||0; });
+  // Ambil SETTINGS terbaru lalu gabungkan (bukan mengganti semuanya) supaya field lain yang
+  // sedang tidak diedit di sini (mis. dari Pengaturan Umum) tidak ikut tertimpa/hilang.
   SETTINGS = await sGet(KEYS.SETTINGS, SETTINGS);
-  SETTINGS.jenisHarga = {...JENIS_HARGA_DRAFT};
+  SETTINGS.jenisList = jenisList;
+  SETTINGS.jenisHarga = jenisHarga;
   await sSet(KEYS.SETTINGS, SETTINGS);
-  toast('Harga jenis pemeriksaan berhasil disimpan.', 'ok');
-  logAudit('Simpan Harga Jenis Pemeriksaan', 'Memperbarui harga per jenis pemeriksaan');
+  toast('Jenis & harga pemeriksaan berhasil disimpan.', 'ok');
+  logAudit('Simpan Jenis & Harga Pemeriksaan', 'Memperbarui daftar jenis pemeriksaan & harganya');
 }
 function drawParamAdmin(){
   const wrap = document.getElementById('paramAdminList');
@@ -3121,7 +3233,6 @@ function renderPengaturanForm(){
   document.getElementById('setKota').value = SETTINGS.kota||'';
   document.getElementById('setNoKwitansiMulai').value = SETTINGS.noKwitansiMulai || 1;
   document.getElementById('setPemeriksaList').value = (SETTINGS.pemeriksaList||[]).join('\n');
-  document.getElementById('setJenisList').value = (SETTINGS.jenisList||[]).join('\n');
   DOKTER_DRAFT = JSON.parse(JSON.stringify(SETTINGS.dokterList||[]));
   KEPALA_DRAFT = JSON.parse(JSON.stringify(SETTINGS.kepalaUptdList||[]));
   drawDokterAdmin();
@@ -3274,7 +3385,13 @@ function toggleWarnaStempel(kind, i){
 }
 async function simpanPengaturan(){
   if(!guardEdit('pengaturan')) return;
+  // PENTING: ambil SETTINGS terbaru dari server lalu GABUNGKAN (bukan mengganti seluruh objek)
+  // supaya field yang tidak diedit lewat form ini — mis. jenisHarga & jenisList yang sekarang
+  // diatur lewat menu Kelola Parameter — tidak ikut terhapus/tertimpa kosong. Sebelumnya bug ini
+  // yang membuat harga per jenis pemeriksaan "hilang" setiap kali Pengaturan Umum disimpan.
+  SETTINGS = await sGet(KEYS.SETTINGS, SETTINGS);
   SETTINGS = {
+    ...SETTINGS,
     pemerintah: document.getElementById('setPemerintah').value.trim(),
     dinas: document.getElementById('setDinas').value.trim(),
     unit: document.getElementById('setUnit').value.trim(),
@@ -3284,7 +3401,6 @@ async function simpanPengaturan(){
     kota: document.getElementById('setKota').value.trim(),
     noKwitansiMulai: Number(document.getElementById('setNoKwitansiMulai').value) || 1,
     pemeriksaList: document.getElementById('setPemeriksaList').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    jenisList: document.getElementById('setJenisList').value.split('\n').map(s=>s.trim()).filter(Boolean),
     dokterList: DOKTER_DRAFT.filter(d=>(d.nama||'').trim()).map(d=>({nama:d.nama.trim(), nip:(d.nip||'').trim(), ttd:d.ttd||'', stempel:d.stempel||'', ttdMode:d.ttdMode||'warna', stempelMode:d.stempelMode||'warna'})),
     kepalaUptdList: KEPALA_DRAFT.filter(d=>(d.nama||'').trim()).map(d=>({nama:d.nama.trim(), nip:(d.nip||'').trim(), ttd:d.ttd||'', stempel:d.stempel||'', ttdMode:d.ttdMode||'warna', stempelMode:d.stempelMode||'warna'})),
   };
@@ -3360,6 +3476,13 @@ let CURRENT_LOK_JENIS = [];   // array nama jenis pemeriksaan terpilih
 let CURRENT_LOK_JUMLAH = {};  // {namaJenis: jumlahSampel} — hanya relevan untuk jenis yang terpilih
 let CURRENT_LOK_PARAMS = {};  // {paramId: true} parameter terpilih (opsional)
 let CURRENT_LOK_MANUAL = {};  // {namaJenisLingkungan: teksTextarea} — sampel per jenis Lingkungan
+// Loket Mikromedis: sheet ketiga di menu Loket Pendaftaran, sama seperti Medis tapi mendukung
+// input BANYAK nama sekaligus dalam satu form (mis. pemeriksaan rectal penjamah makanan yang
+// kadang lebih dari 10 orang). MIKRO_BATCH_MODE=true hanya saat sedang membuat pendaftaran BARU
+// di sheet ini; setiap nama di MIKRO_ROWS akan disimpan sebagai pendaftaran terpisah (nomor
+// kwitansi masing-masing) begitu tombol Simpan ditekan — lihat simpanRegistrasiMikroBatch().
+let MIKRO_BATCH_MODE = false;
+let MIKRO_ROWS = [{nama:'', nik:''}];
 
 function parseJenisList(){
   // Kembalikan struktur {kelompok: [nama,...]}; kelompok '' berarti jenis berdiri sendiri
@@ -3380,6 +3503,10 @@ function isJenisLingkungan(full){ return (full||'').toLowerCase().startsWith('li
 // adalah jenis Lingkungan; kalau tidak ada sama sekali (atau belum pilih jenis apa pun), dianggap
 // "Medis" — dipakai untuk memisahkan daftar pada 2 sub-bagian menu Loket Pendaftaran.
 function isRegistrasiLingkungan(rec){ return (rec.jenisPemeriksaan||[]).some(isJenisLingkungan); }
+// Pendaftaran yang dibuat lewat sheet Loket Mikromedis (banyak nama sekaligus) ditandai
+// loketAsal:'mikromedis' agar bisa dipisahkan dari sheet Medis biasa di daftar pendaftaran,
+// walau sama-sama bukan jenis Lingkungan. Data lama tanpa tanda ini otomatis dianggap Medis.
+function isRegistrasiMikromedis(rec){ return rec.loketAsal === 'mikromedis'; }
 
 // ============ NOMOR KWITANSI: satu nomor urut bersama (sinkron Medis & Lingkungan) ============
 // Disimpan sebagai satu baris counter { n, claimedBy, claimedAt } di cloud (KEYS.NOKWITANSI_COUNTER).
@@ -3460,7 +3587,9 @@ function renderJenisGroups(){
           const hargaLabel = harga>0 ? ` <small>(${formatRupiah(harga)}/sampel)</small>` : '';
           return `<label class="jenis-chip ${on?'on':''}">
               <input type="checkbox" ${on?'checked':''} onchange="toggleLokJenis('${full.replace(/'/g,"\\'")}', this.checked)">${escapeHtml(nama)}${hargaLabel}
-              ${on ? `<span class="jenis-jumlah"> x <input type="number" min="1" value="${jumlah}" onclick="event.stopPropagation()" oninput="setLokJenisJumlah('${full.replace(/'/g,"\\'")}', this.value)"></span>` : ''}
+              ${on ? (MIKRO_BATCH_MODE
+                ? `<span class="jenis-jumlah"> · jumlah sampel = jumlah nama di Daftar Nama</span>`
+                : `<span class="jenis-jumlah"> x <input type="number" min="1" value="${jumlah}" onclick="event.stopPropagation()" oninput="setLokJenisJumlah('${full.replace(/'/g,"\\'")}', this.value)"></span>`) : ''}
             </label>`;
         }).join('')}
       </div>
@@ -3471,18 +3600,28 @@ function renderJenisGroups(){
 // Menampilkan satu kotak sampel manual TERPISAH untuk setiap jenis pemeriksaan Lingkungan yang
 // sedang dicentang — supaya sampel makanan, air minum, air bersih, dst tidak tercampur, dan nanti
 // masing-masing hanya muncul di menu Hasil Lingkungan sesuai jenisnya sendiri-sendiri.
+// Juga dipakai ulang saat MEMBUKA (mengedit) pendaftaran Mikromedis yang sudah tersimpan — supaya
+// Daftar Nama-nya (tersimpan sebagai sampel manual per jenis) tetap bisa dilihat/diedit di sini,
+// walau jenis pemeriksaannya bukan Lingkungan.
 function renderParamManualGroups(){
   const wrap = document.getElementById('lokParamManualGroups');
   if(!wrap) return;
-  const jenisLingkungan = CURRENT_LOK_JENIS.filter(isJenisLingkungan);
-  if(jenisLingkungan.length===0){
-    wrap.innerHTML = '<div class="hint">Centang salah satu jenis pemeriksaan Lingkungan di atas untuk mengisi sampelnya.</div>';
+  const modeMikroEdit = CURRENT_LOKET_KATEGORI==='mikromedis' && !MIKRO_BATCH_MODE;
+  const labelText = document.getElementById('lokParamManualLabelText');
+  const labelHint = document.getElementById('lokParamManualLabelHint');
+  const footHint = document.getElementById('lokParamManualFootHint');
+  if(labelText) labelText.textContent = modeMikroEdit ? 'Daftar Nama (Mikromedis)' : 'Sampel per Jenis Pemeriksaan Lingkungan';
+  if(labelHint) labelHint.textContent = modeMikroEdit ? '(satu nama per baris, per jenis pemeriksaan yang dicentang)' : '(otomatis muncul untuk setiap jenis Lingkungan yang dicentang di atas)';
+  if(footHint) footHint.textContent = modeMikroEdit ? 'Setiap baris akan jadi satu parameter/baris hasil tersendiri saat pendaftaran ini diambil ke Input Hasil.' : 'Setiap sampel akan masuk ke menu Hasil Lingkungan sesuai jenisnya masing-masing (mis. sampel di kolom "Lingkungan > Makanan" hanya akan muncul di menu Hasil Lingkungan Makanan).';
+  const jenisManual = CURRENT_LOK_JENIS.filter(full => isJenisLingkungan(full) || modeMikroEdit);
+  if(jenisManual.length===0){
+    wrap.innerHTML = `<div class="hint">${modeMikroEdit ? 'Centang salah satu jenis pemeriksaan di atas untuk mengisi daftar namanya.' : 'Centang salah satu jenis pemeriksaan Lingkungan di atas untuk mengisi sampelnya.'}</div>`;
     return;
   }
-  wrap.innerHTML = jenisLingkungan.map(full=>`
+  wrap.innerHTML = jenisManual.map(full=>`
     <div style="margin-top:8px;">
       <label style="font-weight:600;font-size:12.5px;">${escapeHtml(full)}</label>
-      <textarea rows="2" placeholder="Satu sampel per baris, cth:&#10;Potato Wedges&#10;Edamame" oninput="setLokManual('${full.replace(/'/g,"\\'")}', this.value)">${escapeHtml(CURRENT_LOK_MANUAL[full]||'')}</textarea>
+      <textarea rows="2" placeholder="${modeMikroEdit ? 'Satu nama per baris' : 'Satu sampel per baris, cth:&#10;Potato Wedges&#10;Edamame'}" oninput="setLokManual('${full.replace(/'/g,"\\'")}', this.value)">${escapeHtml(CURRENT_LOK_MANUAL[full]||'')}</textarea>
     </div>`).join('');
 }
 function setLokManual(full, val){
@@ -3512,8 +3651,62 @@ function hitungEstimasiBiayaLoket(){
     const p = PARAMS.find(x=>x.id===id);
     if(p) total += Number(p.harga)||0;
   });
+  if(MIKRO_BATCH_MODE){
+    const jumlahOrang = MIKRO_ROWS.filter(r=>(r.nama||'').trim()).length;
+    el.textContent = jumlahOrang>0
+      ? `${formatRupiah(total)} / orang · Total ${jumlahOrang} orang (1 kwitansi): ${formatRupiah(total*jumlahOrang)}`
+      : `${formatRupiah(total)} / orang`;
+    return total;
+  }
   el.textContent = formatRupiah(total);
   return total;
+}
+// ============ LOKET MIKROMEDIS — daftar banyak nama dalam satu formulir ============
+function renderMikroRows(){
+  const wrap = document.getElementById('lokMikroRows');
+  if(!wrap) return;
+  if(MIKRO_ROWS.length===0) MIKRO_ROWS.push({nama:'', nik:''});
+  wrap.innerHTML = MIKRO_ROWS.map((row,i)=>`
+    <div class="mikro-row">
+      <span class="mikro-no">${i+1}</span>
+      <input type="text" data-f="nama" placeholder="Nama Orang ${i+1}" value="${escapeHtml(row.nama)}" oninput="MIKRO_ROWS[${i}].nama=this.value; updateMikroCount()">
+      <input type="text" data-f="nik" placeholder="NIK (opsional)" maxlength="16" value="${escapeHtml(row.nik)}" oninput="this.value=this.value.replace(/\\D/g,'');MIKRO_ROWS[${i}].nik=this.value">
+      <button type="button" class="btn btn-sm btn-danger" onclick="hapusBarisMikro(${i})" title="Hapus baris">✕</button>
+    </div>`).join('');
+  updateMikroCount();
+}
+function updateMikroCount(){
+  const counter = document.getElementById('lokMikroCount');
+  if(counter) counter.textContent = MIKRO_ROWS.filter(r=>(r.nama||'').trim()).length;
+  hitungEstimasiBiayaLoket();
+}
+function tambahBarisMikro(n){
+  for(let i=0;i<(n||1);i++) MIKRO_ROWS.push({nama:'', nik:''});
+  renderMikroRows();
+}
+function hapusBarisMikro(i){
+  MIKRO_ROWS.splice(i,1);
+  renderMikroRows();
+}
+// Menerima teks tempelan (satu nama per baris, boleh "Nama, NIK" atau "Nama; NIK") dan
+// menambahkannya ke daftar — mengisi baris kosong yang sudah ada dulu sebelum menambah baris baru,
+// supaya tidak menyisakan baris-baris kosong di tengah daftar.
+function tambahMikroDariTempel(){
+  const ta = document.getElementById('lokMikroBulkText');
+  const lines = (ta.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  if(lines.length===0) return;
+  lines.forEach(line=>{
+    const parts = line.split(/[,;\t]/).map(s=>s.trim());
+    const nama = parts[0]||'';
+    const nik = (parts[1]||'').replace(/\D/g,'');
+    if(!nama) return;
+    const kosong = MIKRO_ROWS.find(r=>!(r.nama||'').trim());
+    if(kosong){ kosong.nama = nama; kosong.nik = nik; }
+    else MIKRO_ROWS.push({nama, nik});
+  });
+  ta.value = '';
+  renderMikroRows();
+  toast(`${lines.length} nama ditambahkan ke daftar.`, 'ok');
 }
 function toggleLokParamPanel(){
   const panel = document.getElementById('lokParamPanel');
@@ -3554,6 +3747,12 @@ function lokFormBaru(goto){
   CURRENT_LOK_MANUAL = {};
   CURRENT_LOK_JUMLAH = {};
   CURRENT_LOK_PARAMS = {};
+  MIKRO_BATCH_MODE = (CURRENT_LOKET_KATEGORI === 'mikromedis');
+  MIKRO_ROWS = [{nama:'', nik:''}];
+  const bulkTa = document.getElementById('lokMikroBulkText');
+  if(bulkTa) bulkTa.value = '';
+  applyLoketSheetMode();
+  renderMikroRows();
   document.getElementById('lokId').value = '';
   document.getElementById('lokNoKwitansi').value = '';
   document.getElementById('lokKategoriLoket').value = 'berbayar_tunai';
@@ -3603,6 +3802,7 @@ let SIMPAN_LOKET_BUSY = false;
 async function simpanRegistrasi(){
   if(!guardEdit('loket')) return;
   if(SIMPAN_LOKET_BUSY) return; // cegah klik ganda memakan 2 nomor kwitansi sekaligus
+  if(MIKRO_BATCH_MODE){ await simpanRegistrasiMikroBatch(); return; }
   const data = collectLoketForm();
   if(!data.nama){ toast('Nama Pasien wajib diisi.', 'err'); return; }
   SIMPAN_LOKET_BUSY = true;
@@ -3631,6 +3831,72 @@ async function simpanRegistrasi(){
     logAudit('Simpan Pendaftaran Loket', `NIK ${data.nik} — ${data.nama}`);
     document.getElementById('btnHapusLok').disabled = false;
     document.getElementById('btnCetakInvoiceLok').disabled = false;
+    renderLoketList();
+  } finally {
+    SIMPAN_LOKET_BUSY = false;
+    if(btnSimpan) btnSimpan.disabled = false;
+  }
+}
+// Menyimpan sheet Loket Mikromedis: satu formulir bisa berisi BANYAK nama (mis. rectal swab
+// >10 orang), tapi disimpan sebagai SATU pendaftaran & SATU nomor kwitansi saja — atas nama
+// Instansi/Kelompok yang didaftarkan (1 instansi = 1 kali pembayaran). Setiap nama pada Daftar
+// Nama disimpan sebagai sampel/parameter manual di bawah jenis pemeriksaan yang dicentang
+// (memakai mekanisme yang sama dengan sampel manual Loket Lingkungan), sehingga saat diambil ke
+// Input Hasil, masing-masing nama otomatis jadi satu baris parameter tersendiri untuk diisi
+// hasilnya — tanpa perlu pendaftaran/nomor kwitansi terpisah per orang. Daftar nama & NIK asli
+// juga disimpan apa adanya di mikroDaftarOrang, supaya bisa dipakai/ditampilkan ulang nanti.
+async function simpanRegistrasiMikroBatch(){
+  const rows = MIKRO_ROWS.filter(r=>(r.nama||'').trim());
+  if(rows.length===0){ toast('Isi minimal satu Nama pada Daftar Nama sebelum menyimpan.', 'err'); return; }
+  const namaInstansi = document.getElementById('lokPemilik').value.trim();
+  if(!namaInstansi){ toast('Nama Instansi / Kelompok wajib diisi untuk Loket Mikromedis.', 'err'); document.getElementById('lokPemilik').focus(); return; }
+  if(CURRENT_LOK_JENIS.length===0){ toast('Pilih minimal satu Jenis Pemeriksaan agar daftar nama bisa dimasukkan sebagai sampel.', 'err'); return; }
+  SIMPAN_LOKET_BUSY = true;
+  const btnSimpan = document.getElementById('btnSimpanLoket');
+  if(btnSimpan) btnSimpan.disabled = true;
+  try{
+    const base = collectLoketForm();
+    REGISTRATIONS = await sGet(KEYS.REGISTRATIONS, REGISTRATIONS);
+    const now = new Date().toISOString();
+    // Setiap jenis pemeriksaan yang dicentang diisi daftar nama yang sama sebagai sampelnya —
+    // format "Nama (NIK ...)" bila NIK diisi, atau nama saja bila tidak.
+    const paramManualByJenis = {};
+    CURRENT_LOK_JENIS.forEach(full=>{
+      paramManualByJenis[full] = rows.map(r=> r.nik ? `${r.nama.trim()} (NIK ${r.nik})` : r.nama.trim());
+    });
+    // Jumlah sampel per jenis = jumlah orang di Daftar Nama, supaya estimasi biaya (harga × jumlah)
+    // otomatis mengikuti banyaknya orang, bukan angka manual.
+    const jenisJumlah = {};
+    let estimasiBiaya = 0;
+    CURRENT_LOK_JENIS.forEach(full=>{
+      jenisJumlah[full] = rows.length;
+      estimasiBiaya += ((SETTINGS.jenisHarga||{})[full] || 0) * rows.length;
+    });
+    Object.keys(CURRENT_LOK_PARAMS).forEach(id=>{
+      const p = PARAMS.find(x=>x.id===id);
+      if(p) estimasiBiaya += Number(p.harga)||0;
+    });
+    const noKwitansi = await ambilNomorKwitansiBerikutnya();
+    const id = 'lok_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+    REGISTRATIONS.push({
+      ...base,
+      id,
+      nama: namaInstansi,
+      nik: '',
+      tglLahir: '', usia: '', jk: '',
+      jenisJumlah,
+      paramManualByJenis,
+      estimasiBiaya,
+      noKwitansi,
+      loketAsal: 'mikromedis',
+      mikroDaftarOrang: rows.map(r=>({nama:r.nama.trim(), nik:(r.nik||'').trim()})),
+      createdAt: now, createdBy: CURRENT_USER.username,
+      updatedAt: now, updatedBy: CURRENT_USER.username,
+    });
+    await sSet(KEYS.REGISTRATIONS, REGISTRATIONS);
+    toast(`Pendaftaran "${namaInstansi}" (${rows.length} orang) berhasil disimpan dengan 1 nomor kwitansi (#${noKwitansi}).`, 'ok');
+    logAudit('Simpan Pendaftaran Loket Mikromedis', `Kwitansi #${noKwitansi} — ${namaInstansi} — ${rows.length} orang — ${rows.map(r=>r.nama.trim()).join(', ')}`);
+    lokFormBaru();
     renderLoketList();
   } finally {
     SIMPAN_LOKET_BUSY = false;
@@ -3672,9 +3938,20 @@ function openRegistrasi(id){
   document.getElementById('lokParamText').value = names.join('; ');
   document.getElementById('btnHapusLok').disabled = false;
   document.getElementById('btnCetakInvoiceLok').disabled = false;
-  // Pastikan sub-bagian Loket (Medis/Lingkungan) yang aktif cocok dengan kategori pendaftaran ini
-  // — kalau tidak, checkbox jenis pemeriksaannya akan tersembunyi karena difilter kategori lain.
-  CURRENT_LOKET_KATEGORI = isRegistrasiLingkungan(rec) ? 'lingkungan' : 'medis';
+  // Pastikan sheet Loket (Medis/Lingkungan/Mikromedis) yang aktif cocok dengan kategori pendaftaran
+  // ini — kalau tidak, checkbox jenis pemeriksaannya akan tersembunyi karena difilter sheet lain.
+  // Membuka pendaftaran Mikromedis yang sudah tersimpan memakai formulir dasar yang sama dengan
+  // Medis (karena datanya memang SATU pendaftaran atas nama instansi), hanya saja kotak "Sampel per
+  // Jenis Pemeriksaan" di bawah akan otomatis berubah jadi "Daftar Nama" — lihat renderParamManualGroups().
+  CURRENT_LOKET_KATEGORI = isRegistrasiLingkungan(rec) ? 'lingkungan' : (isRegistrasiMikromedis(rec) ? 'mikromedis' : 'medis');
+  MIKRO_BATCH_MODE = false;
+  applyLoketSheetMode();
+  const btnM = document.getElementById('sheetTabBtnLoketMedis');
+  const btnL = document.getElementById('sheetTabBtnLoketLingkungan');
+  const btnMk = document.getElementById('sheetTabBtnLoketMikromedis');
+  if(btnM) btnM.classList.toggle('active', CURRENT_LOKET_KATEGORI==='medis');
+  if(btnL) btnL.classList.toggle('active', CURRENT_LOKET_KATEGORI==='lingkungan');
+  if(btnMk) btnMk.classList.toggle('active', CURRENT_LOKET_KATEGORI==='mikromedis');
   renderJenisGroups();
   goView('loket');
 }
@@ -3800,7 +4077,11 @@ function renderLoketList(){
   if(!wrap) return;
   const q = (document.getElementById('lokSearchQ').value||'').toLowerCase().trim();
   let list = [...REGISTRATIONS].sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-  list = list.filter(r => isRegistrasiLingkungan(r) === (CURRENT_LOKET_KATEGORI==='lingkungan'));
+  list = list.filter(r => {
+    if(CURRENT_LOKET_KATEGORI==='lingkungan') return isRegistrasiLingkungan(r);
+    if(CURRENT_LOKET_KATEGORI==='mikromedis') return !isRegistrasiLingkungan(r) && isRegistrasiMikromedis(r);
+    return !isRegistrasiLingkungan(r) && !isRegistrasiMikromedis(r);
+  });
   if(q) list = list.filter(r => (r.nik||'').includes(q) || (r.nama||'').toLowerCase().includes(q) || (r.noKwitansi||'').toLowerCase().includes(q) || (r.pemilik||'').toLowerCase().includes(q));
   if(list.length===0){ wrap.innerHTML = emptyStateHtml(q ? 'Tidak ditemukan pendaftaran yang sesuai.' : 'Belum ada pendaftaran loket.'); return; }
   const allowKirim = canEdit('loket');       // Admin Loket & Administrator: boleh kirim ke antrian setelah bayar
@@ -3826,7 +4107,7 @@ function renderLoketList(){
     <div class="result-item">
       <div class="result-main">
         <span class="rn">${r.noKwitansi ? `<b>#${escapeHtml(r.noKwitansi)}</b> · ` : ''}${r.nik ? `<b>${escapeHtml(r.nik)}</b> — ` : ''}${escapeHtml(r.nama)} ${kategoriBadge}${statusBadge}</span>
-        <div class="rd">${formatJenisDenganJumlah(r.jenisPemeriksaan, r.jenisJumlah) || 'Jenis pemeriksaan belum dipilih'} · Daftar ${fmtDateTime(r.createdAt)}${r.pemilik ? ' · Pemilik: '+escapeHtml(r.pemilik) : ''}${r.estimasiBiaya ? ' · Estimasi: '+formatRupiah(r.estimasiBiaya) : ''}</div>
+        <div class="rd">${formatJenisDenganJumlah(r.jenisPemeriksaan, r.jenisJumlah) || 'Jenis pemeriksaan belum dipilih'} · Daftar ${fmtDateTime(r.createdAt)}${(r.mikroDaftarOrang||[]).length ? ' · '+r.mikroDaftarOrang.length+' orang' : ''}${(r.pemilik && r.pemilik!==r.nama) ? ' · Pemilik: '+escapeHtml(r.pemilik) : ''}${r.estimasiBiaya ? ' · Estimasi: '+formatRupiah(r.estimasiBiaya) : ''}</div>
       </div>
       <div class="result-actions">${actions}</div>
     </div>`;
@@ -3862,7 +4143,7 @@ function prosesKeInputHasil(id){
   // Jaga-jaga tambahan: kalau sedang berada di menu kategori tertentu (mis. "Hasil Medis"),
   // pastikan jenis pemeriksaan pasien memang cocok — supaya data dari kategori lain tidak
   // pernah bisa ikut terambil, dari jalur manapun tombol "Ambil" ini dipanggil.
-  if(CURRENT_HASIL_KATEGORI && !jenisCocokKategori(rec.jenisPemeriksaan, CURRENT_HASIL_KATEGORI)){
+  if(CURRENT_HASIL_KATEGORI && !jenisCocokKategori(rec.jenisPemeriksaan, CURRENT_HASIL_KATEGORI, rec)){
     toast(`Pasien ini bukan untuk kategori "${KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.label}" — tidak diambil.`, 'err');
     return;
   }
@@ -4029,7 +4310,7 @@ function renderHasilQueue(){
   const isLingkunganKategori = CURRENT_HASIL_KATEGORI && CURRENT_HASIL_KATEGORI.startsWith('lingkungan');
   const queue = REGISTRATIONS.filter(r=>{
     if(!r.siapDiproses) return false;
-    if(!jenisCocokKategori(r.jenisPemeriksaan, CURRENT_HASIL_KATEGORI)) return false;
+    if(!jenisCocokKategori(r.jenisPemeriksaan, CURRENT_HASIL_KATEGORI, r)) return false;
     if(isLingkunganKategori){
       // Kategori lingkungan: sembunyikan hanya bila KATEGORI INI sudah pernah diambil —
       // kategori lingkungan lain pada pendaftaran yang sama tetap independen.
