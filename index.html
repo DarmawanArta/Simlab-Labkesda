@@ -745,7 +745,6 @@
         <svg class="nav-toggle-chevron" id="navHasilChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </button>
       <div class="nav-subgroup" id="navHasilSub">
-        <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="" onclick="goFormKategori('')">Semua Hasil</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="medis" onclick="goFormKategori('medis')">Hasil Medis</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="mikromedis" onclick="goFormKategori('mikromedis')">Hasil Mikromedis</button>
         <button class="nav-btn nav-btn-hasil-kat nav-btn-sub" data-view="form" data-kategori="lingkungan_makanan" onclick="goFormKategori('lingkungan_makanan')">Hasil Lingkungan Makanan</button>
@@ -970,10 +969,6 @@
           <div class="grid-2">
             <div class="field"><label>Lokasi</label><input type="text" id="pLokasi" oninput="markDirty()" placeholder="cth. SPPG Kota Surabaya Krembangan Perak Barat 3"></div>
             <div class="field"><label>Petugas / Pemilik</label><input type="text" id="pPetugasPemilik" oninput="markDirty()" placeholder="cth. Tawaratih"></div>
-            <div class="field"><label>Jenis Pengujian</label><input type="text" id="pJenisPengujian" oninput="markDirty()" placeholder="cth. Mikrobiologi"></div>
-            <div class="field"><label>Jenis Contoh</label><input type="text" id="pJenisContoh" oninput="markDirty()" placeholder="cth. Makanan"></div>
-            <div class="field"><label>Metode Pengujian</label><input type="text" id="pMetodePengujian" oninput="markDirty()" placeholder="cth. Pembiakan"></div>
-            <div class="field"><label>Referensi Regulasi</label><input type="text" id="pReferensiRegulasi" oninput="markDirty()" placeholder="cth. PERMENKES RI NO.1096/MENKES/PER/VI/2011"></div>
             <div class="field"><label>Diambil Tanggal</label><input type="date" id="pDiambilTgl" oninput="markDirty()"></div>
             <div class="field"><label>Diambil Jam</label><input type="time" id="pDiambilJam" oninput="markDirty()"></div>
             <div class="field"><label>Diterima Tanggal</label><input type="date" id="pDiterimaTgl" oninput="markDirty()"></div>
@@ -1458,8 +1453,8 @@ const SESSION_KEY = 'simlab:session';
 // ============ KONEKSI DATABASE (SUPABASE) ============
 // Data disimpan real-time di cloud sehingga bisa diakses dari komputer/lokasi mana saja.
 // localStorage tetap dipakai sebagai cadangan otomatis bila koneksi internet sedang terputus.
-const SUPABASE_URL = "https://zfwrshbnkjkhifvjsexu.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpmd3JzaGJua2praGlmdmpzZXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MTA1MzAsImV4cCI6MjEwNTE4NjUzMH0.gUuQ6HfELjLOO45rfbq4t4hw1cxbpqkvn9UNk6Z9hNw";
+const SUPABASE_URL = "https://rdyavwofbntoeljejvlw.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkeWF2d29mYm50b2VsamVqdmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MDkyMzQsImV4cCI6MjEwMDA4NTIzNH0.OI7dptU7gHXXE80YPx3LFU2bf9Lw3geNIUtYIW676L0";
 
 async function cloudGet(key){
   const res = await fetch(SUPABASE_URL + 'kv_store?key=eq.' + encodeURIComponent(key) + '&select=value', {
@@ -1616,7 +1611,6 @@ const KATEGORI_HASIL_MAP = {
 // disembunyikan dan bidang "Data Pengujian Lingkungan" dimunculkan (dengan nilai bawaan dari kategori)
 // saat sedang berada di salah satu menu Hasil Lingkungan.
 function applyKategoriFormMode(){
-  const info = KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI];
   const isLK = CURRENT_HASIL_KATEGORI && CURRENT_HASIL_KATEGORI.startsWith('lingkungan');
   document.querySelectorAll('.medis-only').forEach(el=> el.style.display = isLK ? 'none' : '');
   document.querySelectorAll('.lingkungan-field-only').forEach(el=> el.classList.toggle('hidden', !isLK));
@@ -1626,14 +1620,6 @@ function applyKategoriFormMode(){
   const lblNip = document.getElementById('lblNip');
   if(lblPJ) lblPJ.textContent = isLK ? 'Penanggung Jawab Lab. Lingkungan' : 'Dokter Penanggung Jawab';
   if(lblNip) lblNip.textContent = isLK ? 'NIP Penanggung Jawab' : 'NIP Dokter';
-  if(isLK && info && !EDITING_ID){
-    // Isi nilai bawaan hanya untuk formulir baru (bukan saat membuka data lama, supaya isian
-    // yang sudah pernah disimpan tidak tertimpa).
-    if(!document.getElementById('pJenisContoh').value) document.getElementById('pJenisContoh').value = info.jenisContoh||'';
-    if(!document.getElementById('pJenisPengujian').value) document.getElementById('pJenisPengujian').value = info.jenisPengujian||'';
-    if(!document.getElementById('pMetodePengujian').value) document.getElementById('pMetodePengujian').value = info.metodeDefault||'';
-    if(!document.getElementById('pReferensiRegulasi').value) document.getElementById('pReferensiRegulasi').value = info.referensiDefault||'';
-  }
 }
 function jenisCocokKategori(jenisList, kategoriKey, rec){
   if(!kategoriKey) return true; // "Semua Hasil" — tidak difilter
@@ -2492,10 +2478,6 @@ function formBaru(discardDraft){
   document.getElementById('pNip').value = '';
   document.getElementById('pLokasi').value = '';
   document.getElementById('pPetugasPemilik').value = '';
-  document.getElementById('pJenisPengujian').value = '';
-  document.getElementById('pJenisContoh').value = '';
-  document.getElementById('pMetodePengujian').value = '';
-  document.getElementById('pReferensiRegulasi').value = '';
   document.getElementById('pDiambilTgl').value = '';
   document.getElementById('pDiambilJam').value = '';
   document.getElementById('pDiterimaTgl').value = '';
@@ -2552,10 +2534,12 @@ function collectFormData(){
     kategoriHasil: CURRENT_HASIL_KATEGORI || '',
     lokasi: document.getElementById('pLokasi').value.trim(),
     petugasPemilik: document.getElementById('pPetugasPemilik').value.trim(),
-    jenisPengujian: document.getElementById('pJenisPengujian').value.trim(),
-    jenisContoh: document.getElementById('pJenisContoh').value.trim(),
-    metodePengujian: document.getElementById('pMetodePengujian').value.trim(),
-    referensiRegulasi: document.getElementById('pReferensiRegulasi').value.trim(),
+    // Field input-nya sudah dihapus dari formulir — nilainya sekarang selalu mengikuti bawaan
+    // kategori Hasil Lingkungan yang aktif (lihat KATEGORI_HASIL_MAP), bukan diketik manual lagi.
+    jenisPengujian: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.jenisPengujian) || '',
+    jenisContoh: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.jenisContoh) || '',
+    metodePengujian: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.metodeDefault) || '',
+    referensiRegulasi: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.referensiDefault) || '',
     diambilTgl: document.getElementById('pDiambilTgl').value,
     diambilJam: document.getElementById('pDiambilJam').value,
     diterimaTgl: document.getElementById('pDiterimaTgl').value,
@@ -2633,10 +2617,6 @@ function loadRecordToForm(rec){
   document.getElementById('pNip').value = rec.nip||'';
   document.getElementById('pLokasi').value = rec.lokasi||'';
   document.getElementById('pPetugasPemilik').value = rec.petugasPemilik||'';
-  document.getElementById('pJenisPengujian').value = rec.jenisPengujian||'';
-  document.getElementById('pJenisContoh').value = rec.jenisContoh||'';
-  document.getElementById('pMetodePengujian').value = rec.metodePengujian||'';
-  document.getElementById('pReferensiRegulasi').value = rec.referensiRegulasi||'';
   document.getElementById('pDiambilTgl').value = rec.diambilTgl||'';
   document.getElementById('pDiambilJam').value = rec.diambilJam||'';
   document.getElementById('pDiterimaTgl').value = rec.diterimaTgl||'';
@@ -2706,10 +2686,6 @@ async function checkDraft(){
       document.getElementById('pNip').value = draft.nip||'';
       document.getElementById('pLokasi').value = draft.lokasi||'';
       document.getElementById('pPetugasPemilik').value = draft.petugasPemilik||'';
-      document.getElementById('pJenisPengujian').value = draft.jenisPengujian||'';
-      document.getElementById('pJenisContoh').value = draft.jenisContoh||'';
-      document.getElementById('pMetodePengujian').value = draft.metodePengujian||'';
-      document.getElementById('pReferensiRegulasi').value = draft.referensiRegulasi||'';
       document.getElementById('pDiambilTgl').value = draft.diambilTgl||'';
       document.getElementById('pDiambilJam').value = draft.diambilJam||'';
       document.getElementById('pDiterimaTgl').value = draft.diterimaTgl||'';
