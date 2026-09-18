@@ -969,6 +969,10 @@
           <div class="grid-2">
             <div class="field"><label>Lokasi</label><input type="text" id="pLokasi" oninput="markDirty()" placeholder="cth. SPPG Kota Surabaya Krembangan Perak Barat 3"></div>
             <div class="field"><label>Petugas / Pemilik</label><input type="text" id="pPetugasPemilik" oninput="markDirty()" placeholder="cth. Tawaratih"></div>
+            <div class="field"><label>Jenis Pengujian</label><input type="text" id="pJenisPengujian" oninput="markDirty()" placeholder="cth. Mikrobiologi"></div>
+            <div class="field"><label>Jenis Contoh</label><input type="text" id="pJenisContoh" oninput="markDirty()" placeholder="cth. Makanan"></div>
+            <div class="field"><label>Metode Pengujian</label><input type="text" id="pMetodePengujian" oninput="markDirty()" placeholder="cth. Pembiakan"></div>
+            <div class="field"><label>Referensi Regulasi</label><input type="text" id="pReferensiRegulasi" oninput="markDirty()" placeholder="cth. PERMENKES RI NO.1096/MENKES/PER/VI/2011"></div>
             <div class="field"><label>Diambil Tanggal</label><input type="date" id="pDiambilTgl" oninput="markDirty()"></div>
             <div class="field"><label>Diambil Jam</label><input type="time" id="pDiambilJam" oninput="markDirty()"></div>
             <div class="field"><label>Diterima Tanggal</label><input type="date" id="pDiterimaTgl" oninput="markDirty()"></div>
@@ -1114,6 +1118,19 @@
           <div class="field" style="grid-column:1/-1;"><label>Alamat</label><textarea id="lokAlamat"></textarea></div>
           <div class="field"><label>No. Telepon</label><input type="text" id="lokTlp" placeholder="cth. 0812xxxxxxx"></div>
           <div class="field"><label id="lokPemilikLabel"><span id="lokPemilikLabelText">Pemilik Instansi</span> <span class="hint" style="font-weight:400;" id="lokPemilikHint">(opsional — untuk pemeriksaan lingkungan/institusi)</span></label><input type="text" id="lokPemilik" placeholder="cth. PT Sumber Rejeki / Puskesmas X"></div>
+        </div>
+
+        <div class="field hidden" id="lokLingkunganExtraWrap">
+          <div class="section-title" style="margin-top:4px;">Data Pengujian Lingkungan</div>
+          <div class="section-desc">Muncul otomatis karena sedang di sheet Loket Lingkungan. Data ini otomatis ikut terisi ke Input Hasil saat pendaftaran ini diambil dari antrian.</div>
+          <div class="grid-2">
+            <div class="field"><label>Tanggal Pemeriksaan</label><input type="date" id="lokTglPeriksa"></div>
+            <div class="field"><label>Lokasi</label><input type="text" id="lokLokasi" placeholder="cth. SPPG Kota Surabaya Krembangan Perak Barat 3"></div>
+            <div class="field"><label>Diambil Tanggal</label><input type="date" id="lokDiambilTgl"></div>
+            <div class="field"><label>Diambil Jam</label><input type="time" id="lokDiambilJam"></div>
+            <div class="field"><label>Diterima Tanggal</label><input type="date" id="lokDiterimaTgl"></div>
+            <div class="field"><label>Diterima Jam</label><input type="time" id="lokDiterimaJam"></div>
+          </div>
         </div>
 
         <div class="field hidden" id="lokMikroBatchWrap">
@@ -1611,6 +1628,7 @@ const KATEGORI_HASIL_MAP = {
 // disembunyikan dan bidang "Data Pengujian Lingkungan" dimunculkan (dengan nilai bawaan dari kategori)
 // saat sedang berada di salah satu menu Hasil Lingkungan.
 function applyKategoriFormMode(){
+  const info = KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI];
   const isLK = CURRENT_HASIL_KATEGORI && CURRENT_HASIL_KATEGORI.startsWith('lingkungan');
   document.querySelectorAll('.medis-only').forEach(el=> el.style.display = isLK ? 'none' : '');
   document.querySelectorAll('.lingkungan-field-only').forEach(el=> el.classList.toggle('hidden', !isLK));
@@ -1620,6 +1638,14 @@ function applyKategoriFormMode(){
   const lblNip = document.getElementById('lblNip');
   if(lblPJ) lblPJ.textContent = isLK ? 'Penanggung Jawab Lab. Lingkungan' : 'Dokter Penanggung Jawab';
   if(lblNip) lblNip.textContent = isLK ? 'NIP Penanggung Jawab' : 'NIP Dokter';
+  if(isLK && info && !EDITING_ID){
+    // Isi nilai bawaan hanya untuk formulir baru (bukan saat membuka data lama, supaya isian
+    // yang sudah pernah disimpan tidak tertimpa).
+    if(!document.getElementById('pJenisContoh').value) document.getElementById('pJenisContoh').value = info.jenisContoh||'';
+    if(!document.getElementById('pJenisPengujian').value) document.getElementById('pJenisPengujian').value = info.jenisPengujian||'';
+    if(!document.getElementById('pMetodePengujian').value) document.getElementById('pMetodePengujian').value = info.metodeDefault||'';
+    if(!document.getElementById('pReferensiRegulasi').value) document.getElementById('pReferensiRegulasi').value = info.referensiDefault||'';
+  }
 }
 function jenisCocokKategori(jenisList, kategoriKey, rec){
   if(!kategoriKey) return true; // "Semua Hasil" — tidak difilter
@@ -1656,18 +1682,23 @@ function applyLoketSheetMode(){
   const single = document.getElementById('lokSingleNameFields');
   const noKw = document.getElementById('lokNoKwitansiFieldWrap');
   const batch = document.getElementById('lokMikroBatchWrap');
+  const isLingkunganSheet = CURRENT_LOKET_KATEGORI === 'lingkungan';
   if(single) single.classList.toggle('hidden', MIKRO_BATCH_MODE);
   if(noKw) noKw.classList.toggle('hidden', MIKRO_BATCH_MODE);
   if(batch) batch.classList.toggle('hidden', !MIKRO_BATCH_MODE);
+  const lkExtra = document.getElementById('lokLingkunganExtraWrap');
+  if(lkExtra) lkExtra.classList.toggle('hidden', !isLingkunganSheet);
   const btnSimpan = document.getElementById('btnSimpanLoket');
   if(btnSimpan) btnSimpan.textContent = MIKRO_BATCH_MODE ? 'Simpan Semua Pendaftaran' : 'Simpan Pendaftaran';
   // Di sheet Mikromedis, "Pemilik Instansi" berubah jadi kolom wajib "Nama Instansi / Kelompok" —
   // inilah yang dipakai sebagai nama pendaftaran & kwitansi tunggal untuk seluruh nama di bawahnya.
+  // Di sheet Lingkungan, labelnya berubah jadi "Petugas / Pemilik" (tetap opsional) supaya
+  // istilahnya sama dengan bagian "Data Pengujian Lingkungan" di Input Hasil.
   const pemilikLabel = document.getElementById('lokPemilikLabel');
   const pemilikText = document.getElementById('lokPemilikLabelText');
   const pemilikHint = document.getElementById('lokPemilikHint');
   if(pemilikLabel) pemilikLabel.classList.toggle('req', MIKRO_BATCH_MODE);
-  if(pemilikText) pemilikText.textContent = MIKRO_BATCH_MODE ? 'Nama Instansi / Kelompok' : 'Pemilik Instansi';
+  if(pemilikText) pemilikText.textContent = MIKRO_BATCH_MODE ? 'Nama Instansi / Kelompok' : (isLingkunganSheet ? 'Petugas / Pemilik' : 'Pemilik Instansi');
   if(pemilikHint) pemilikHint.textContent = MIKRO_BATCH_MODE
     ? '(wajib — dipakai sebagai nama pendaftaran & nomor kwitansi tunggal untuk semua nama di Daftar Nama)'
     : '(opsional — untuk pemeriksaan lingkungan/institusi)';
@@ -2478,6 +2509,10 @@ function formBaru(discardDraft){
   document.getElementById('pNip').value = '';
   document.getElementById('pLokasi').value = '';
   document.getElementById('pPetugasPemilik').value = '';
+  document.getElementById('pJenisPengujian').value = '';
+  document.getElementById('pJenisContoh').value = '';
+  document.getElementById('pMetodePengujian').value = '';
+  document.getElementById('pReferensiRegulasi').value = '';
   document.getElementById('pDiambilTgl').value = '';
   document.getElementById('pDiambilJam').value = '';
   document.getElementById('pDiterimaTgl').value = '';
@@ -2534,12 +2569,10 @@ function collectFormData(){
     kategoriHasil: CURRENT_HASIL_KATEGORI || '',
     lokasi: document.getElementById('pLokasi').value.trim(),
     petugasPemilik: document.getElementById('pPetugasPemilik').value.trim(),
-    // Field input-nya sudah dihapus dari formulir — nilainya sekarang selalu mengikuti bawaan
-    // kategori Hasil Lingkungan yang aktif (lihat KATEGORI_HASIL_MAP), bukan diketik manual lagi.
-    jenisPengujian: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.jenisPengujian) || '',
-    jenisContoh: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.jenisContoh) || '',
-    metodePengujian: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.metodeDefault) || '',
-    referensiRegulasi: (KATEGORI_HASIL_MAP[CURRENT_HASIL_KATEGORI]?.referensiDefault) || '',
+    jenisPengujian: document.getElementById('pJenisPengujian').value.trim(),
+    jenisContoh: document.getElementById('pJenisContoh').value.trim(),
+    metodePengujian: document.getElementById('pMetodePengujian').value.trim(),
+    referensiRegulasi: document.getElementById('pReferensiRegulasi').value.trim(),
     diambilTgl: document.getElementById('pDiambilTgl').value,
     diambilJam: document.getElementById('pDiambilJam').value,
     diterimaTgl: document.getElementById('pDiterimaTgl').value,
@@ -2617,6 +2650,10 @@ function loadRecordToForm(rec){
   document.getElementById('pNip').value = rec.nip||'';
   document.getElementById('pLokasi').value = rec.lokasi||'';
   document.getElementById('pPetugasPemilik').value = rec.petugasPemilik||'';
+  document.getElementById('pJenisPengujian').value = rec.jenisPengujian||'';
+  document.getElementById('pJenisContoh').value = rec.jenisContoh||'';
+  document.getElementById('pMetodePengujian').value = rec.metodePengujian||'';
+  document.getElementById('pReferensiRegulasi').value = rec.referensiRegulasi||'';
   document.getElementById('pDiambilTgl').value = rec.diambilTgl||'';
   document.getElementById('pDiambilJam').value = rec.diambilJam||'';
   document.getElementById('pDiterimaTgl').value = rec.diterimaTgl||'';
@@ -2686,6 +2723,10 @@ async function checkDraft(){
       document.getElementById('pNip').value = draft.nip||'';
       document.getElementById('pLokasi').value = draft.lokasi||'';
       document.getElementById('pPetugasPemilik').value = draft.petugasPemilik||'';
+      document.getElementById('pJenisPengujian').value = draft.jenisPengujian||'';
+      document.getElementById('pJenisContoh').value = draft.jenisContoh||'';
+      document.getElementById('pMetodePengujian').value = draft.metodePengujian||'';
+      document.getElementById('pReferensiRegulasi').value = draft.referensiRegulasi||'';
       document.getElementById('pDiambilTgl').value = draft.diambilTgl||'';
       document.getElementById('pDiambilJam').value = draft.diambilJam||'';
       document.getElementById('pDiterimaTgl').value = draft.diterimaTgl||'';
@@ -3761,6 +3802,12 @@ function lokFormBaru(goto){
   document.getElementById('lokAlamat').value = '';
   document.getElementById('lokTlp').value = '';
   document.getElementById('lokPemilik').value = '';
+  document.getElementById('lokTglPeriksa').value = '';
+  document.getElementById('lokLokasi').value = '';
+  document.getElementById('lokDiambilTgl').value = '';
+  document.getElementById('lokDiambilJam').value = '';
+  document.getElementById('lokDiterimaTgl').value = '';
+  document.getElementById('lokDiterimaJam').value = '';
   document.getElementById('lokCatatan').value = '';
   document.getElementById('lokKetInvoice').value = '';
   document.getElementById('lokParamText').value = '';
@@ -3786,6 +3833,12 @@ function collectLoketForm(){
     alamat: document.getElementById('lokAlamat').value.trim(),
     noTlp: document.getElementById('lokTlp').value.trim(),
     pemilik: document.getElementById('lokPemilik').value.trim(),
+    tglPeriksa: document.getElementById('lokTglPeriksa').value,
+    lokasi: document.getElementById('lokLokasi').value.trim(),
+    diambilTgl: document.getElementById('lokDiambilTgl').value,
+    diambilJam: document.getElementById('lokDiambilJam').value,
+    diterimaTgl: document.getElementById('lokDiterimaTgl').value,
+    diterimaJam: document.getElementById('lokDiterimaJam').value,
     jenisPemeriksaan: [...CURRENT_LOK_JENIS],
     jenisJumlah: {...CURRENT_LOK_JUMLAH},
     parameterIds: Object.keys(CURRENT_LOK_PARAMS),
@@ -3915,6 +3968,12 @@ function openRegistrasi(id){
   document.getElementById('lokAlamat').value = rec.alamat||'';
   document.getElementById('lokTlp').value = rec.noTlp||'';
   document.getElementById('lokPemilik').value = rec.pemilik||'';
+  document.getElementById('lokTglPeriksa').value = rec.tglPeriksa||'';
+  document.getElementById('lokLokasi').value = rec.lokasi||'';
+  document.getElementById('lokDiambilTgl').value = rec.diambilTgl||'';
+  document.getElementById('lokDiambilJam').value = rec.diambilJam||'';
+  document.getElementById('lokDiterimaTgl').value = rec.diterimaTgl||'';
+  document.getElementById('lokDiterimaJam').value = rec.diterimaJam||'';
   document.getElementById('lokCatatan').value = rec.catatan||'';
   document.getElementById('lokKetInvoice').value = rec.keteranganInvoice||'';
   CURRENT_LOK_JENIS = [...(rec.jenisPemeriksaan||[])];
@@ -4208,9 +4267,13 @@ function prosesKeInputHasil(id){
   CURRENT_FORM_SOURCE_REG_ID = rec.id;
   document.getElementById('pNama').value = rec.nama||'';
   document.getElementById('pAlamat').value = rec.alamat||'';
-  document.getElementById('pLokasi').value = rec.pemilik||rec.nama||'';
+  document.getElementById('pTglPeriksa').value = rec.tglPeriksa || todayISO();
+  document.getElementById('pLokasi').value = rec.lokasi || rec.pemilik || rec.nama || '';
   document.getElementById('pPetugasPemilik').value = rec.pemilik||'';
-  document.getElementById('pDiambilTgl').value = (rec.createdAt||'').slice(0,10);
+  document.getElementById('pDiambilTgl').value = rec.diambilTgl || (rec.createdAt||'').slice(0,10);
+  document.getElementById('pDiambilJam').value = rec.diambilJam||'';
+  document.getElementById('pDiterimaTgl').value = rec.diterimaTgl||'';
+  document.getElementById('pDiterimaJam').value = rec.diterimaJam||'';
   let sampelCount = 0;
   jenisTerkait.forEach(jenis=>{
     const list = (rec.paramManualByJenis||{})[jenis] || [];
