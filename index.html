@@ -1470,8 +1470,8 @@ const SESSION_KEY = 'simlab:session';
 // ============ KONEKSI DATABASE (SUPABASE) ============
 // Data disimpan real-time di cloud sehingga bisa diakses dari komputer/lokasi mana saja.
 // localStorage tetap dipakai sebagai cadangan otomatis bila koneksi internet sedang terputus.
-const SUPABASE_URL = "https://rdyavwofbntoeljejvlw.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkeWF2d29mYm50b2VsamVqdmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MDkyMzQsImV4cCI6MjEwMDA4NTIzNH0.OI7dptU7gHXXE80YPx3LFU2bf9Lw3geNIUtYIW676L0";
+const SUPABASE_URL = "https://zfwrshbnkjkhifvjsexu.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpmd3JzaGJua2praGlmdmpzZXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MTA1MzAsImV4cCI6MjEwNTE4NjUzMH0.gUuQ6HfELjLOO45rfbq4t4hw1cxbpqkvn9UNk6Z9hNw";
 
 async function cloudGet(key){
   const res = await fetch(SUPABASE_URL + 'kv_store?key=eq.' + encodeURIComponent(key) + '&select=value', {
