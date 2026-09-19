@@ -1100,7 +1100,7 @@
         <input type="hidden" id="lokId">
         <div class="grid-2">
           <div class="field" id="lokNoKwitansiFieldWrap"><label>Nomor Kwitansi</label><input type="text" id="lokNoKwitansi" placeholder="(otomatis saat disimpan)" readonly style="background:var(--bg);cursor:not-allowed;"></div>
-          <div class="field"><label class="req">Jenis Pendaftaran</label>
+          <div class="field"><label class="req">Jenis Pembayaran</label>
             <select id="lokKategoriLoket">
               <option value="berbayar_tunai">Berbayar Tunai</option>
               <option value="berbayar_qris">Berbayar QRIS</option>
@@ -1108,24 +1108,24 @@
               <option value="gratis">Gratis</option>
             </select>
           </div>
+          <div class="field hidden" id="lokTglSampelDiterimaWrap"><label>Tanggal Sampel Diterima</label><input type="date" id="lokTglPeriksa"></div>
+          <input type="hidden" id="lokLokasi" value="">
           <div id="lokSingleNameFields" style="display:contents">
-          <div class="field"><label>NIK <span class="hint" style="font-weight:400;">(opsional — boleh dikosongkan untuk pemeriksaan lingkungan/instansi)</span></label><input type="text" id="lokNik" maxlength="16" placeholder="16 digit NIK, kosongkan bila tidak ada" oninput="this.value=this.value.replace(/\D/g,'')"></div>
-          <div class="field"><label class="req">Nama Pasien</label><input type="text" id="lokNama"></div>
-          <div class="field"><label>Tanggal Lahir</label><input type="date" id="lokTglLahir" oninput="hitungUsiaLoket()"></div>
-          <div class="field"><label>Usia</label><input type="text" id="lokUsia" placeholder="Otomatis dari tanggal lahir"></div>
-          <div class="field"><label>Jenis Kelamin</label><select id="lokJK"><option value="">- Pilih -</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+          <div class="field" id="lokNikWrap"><label>NIK <span class="hint" style="font-weight:400;">(opsional — boleh dikosongkan bila tidak ada)</span></label><input type="text" id="lokNik" maxlength="16" placeholder="16 digit NIK, kosongkan bila tidak ada" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+          <div class="field"><label class="req"><span id="lokNamaLabelText">Nama Pasien</span></label><input type="text" id="lokNama"></div>
+          <div class="field" id="lokTglLahirWrap"><label>Tanggal Lahir</label><input type="date" id="lokTglLahir" oninput="hitungUsiaLoket()"></div>
+          <div class="field" id="lokUsiaWrap"><label>Usia</label><input type="text" id="lokUsia" placeholder="Otomatis dari tanggal lahir"></div>
+          <div class="field" id="lokJKWrap"><label>Jenis Kelamin</label><select id="lokJK"><option value="">- Pilih -</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
           </div>
-          <div class="field" style="grid-column:1/-1;"><label>Alamat</label><textarea id="lokAlamat"></textarea></div>
+          <div class="field" id="lokAlamatWrap" style="grid-column:1/-1;"><label>Alamat</label><textarea id="lokAlamat"></textarea></div>
           <div class="field"><label>No. Telepon</label><input type="text" id="lokTlp" placeholder="cth. 0812xxxxxxx"></div>
           <div class="field"><label id="lokPemilikLabel"><span id="lokPemilikLabelText">Pemilik Instansi</span> <span class="hint" style="font-weight:400;" id="lokPemilikHint">(opsional — untuk pemeriksaan lingkungan/institusi)</span></label><input type="text" id="lokPemilik" placeholder="cth. PT Sumber Rejeki / Puskesmas X"></div>
         </div>
 
         <div class="field hidden" id="lokLingkunganExtraWrap">
-          <div class="section-title" style="margin-top:4px;">Data Pengujian Lingkungan</div>
+          <div class="section-title" style="margin-top:4px;">Waktu Pengambilan &amp; Penerimaan Sampel</div>
           <div class="section-desc">Muncul otomatis karena sedang di sheet Loket Lingkungan. Data ini otomatis ikut terisi ke Input Hasil saat pendaftaran ini diambil dari antrian.</div>
           <div class="grid-2">
-            <div class="field"><label>Tanggal Pemeriksaan</label><input type="date" id="lokTglPeriksa"></div>
-            <div class="field"><label>Lokasi</label><input type="text" id="lokLokasi" placeholder="cth. SPPG Kota Surabaya Krembangan Perak Barat 3"></div>
             <div class="field"><label>Diambil Tanggal</label><input type="date" id="lokDiambilTgl"></div>
             <div class="field"><label>Diambil Jam</label><input type="time" id="lokDiambilJam"></div>
             <div class="field"><label>Diterima Tanggal</label><input type="date" id="lokDiterimaTgl"></div>
@@ -1688,17 +1688,30 @@ function applyLoketSheetMode(){
   if(batch) batch.classList.toggle('hidden', !MIKRO_BATCH_MODE);
   const lkExtra = document.getElementById('lokLingkunganExtraWrap');
   if(lkExtra) lkExtra.classList.toggle('hidden', !isLingkunganSheet);
+  // Susunan khusus sheet Loket Lingkungan: tampilkan "Tanggal Sampel Diterima", sembunyikan
+  // field data diri perorangan (NIK/Tgl Lahir/Usia/Jenis Kelamin/Alamat) yang tidak relevan
+  // untuk pendaftaran instansi/lingkungan.
+  const tglSampelWrap = document.getElementById('lokTglSampelDiterimaWrap');
+  if(tglSampelWrap) tglSampelWrap.classList.toggle('hidden', !isLingkunganSheet);
+  ['lokNikWrap','lokTglLahirWrap','lokUsiaWrap','lokJKWrap','lokAlamatWrap'].forEach(wid=>{
+    const el = document.getElementById(wid);
+    if(el) el.classList.toggle('hidden', isLingkunganSheet);
+  });
   const btnSimpan = document.getElementById('btnSimpanLoket');
   if(btnSimpan) btnSimpan.textContent = MIKRO_BATCH_MODE ? 'Simpan Semua Pendaftaran' : 'Simpan Pendaftaran';
+  // Label "Nama Pasien" berubah jadi "Nama Instansi" khusus di sheet Loket Lingkungan, karena
+  // yang didaftarkan adalah instansi/lokasi sampel, bukan pasien perorangan.
+  const namaLabelText = document.getElementById('lokNamaLabelText');
+  if(namaLabelText) namaLabelText.textContent = isLingkunganSheet ? 'Nama Instansi' : 'Nama Pasien';
   // Di sheet Mikromedis, "Pemilik Instansi" berubah jadi kolom wajib "Nama Instansi / Kelompok" —
   // inilah yang dipakai sebagai nama pendaftaran & kwitansi tunggal untuk seluruh nama di bawahnya.
-  // Di sheet Lingkungan, labelnya berubah jadi "Petugas / Pemilik" (tetap opsional) supaya
+  // Di sheet Lingkungan, labelnya berubah jadi "Petugas / Pemilik Instansi" (tetap opsional) supaya
   // istilahnya sama dengan bagian "Data Pengujian Lingkungan" di Input Hasil.
   const pemilikLabel = document.getElementById('lokPemilikLabel');
   const pemilikText = document.getElementById('lokPemilikLabelText');
   const pemilikHint = document.getElementById('lokPemilikHint');
   if(pemilikLabel) pemilikLabel.classList.toggle('req', MIKRO_BATCH_MODE);
-  if(pemilikText) pemilikText.textContent = MIKRO_BATCH_MODE ? 'Nama Instansi / Kelompok' : (isLingkunganSheet ? 'Petugas / Pemilik' : 'Pemilik Instansi');
+  if(pemilikText) pemilikText.textContent = MIKRO_BATCH_MODE ? 'Nama Instansi / Kelompok' : (isLingkunganSheet ? 'Petugas / Pemilik Instansi' : 'Pemilik Instansi');
   if(pemilikHint) pemilikHint.textContent = MIKRO_BATCH_MODE
     ? '(wajib — dipakai sebagai nama pendaftaran & nomor kwitansi tunggal untuk semua nama di Daftar Nama)'
     : '(opsional — untuk pemeriksaan lingkungan/institusi)';
@@ -3854,7 +3867,7 @@ async function simpanRegistrasi(){
   if(SIMPAN_LOKET_BUSY) return; // cegah klik ganda memakan 2 nomor kwitansi sekaligus
   if(MIKRO_BATCH_MODE){ await simpanRegistrasiMikroBatch(); return; }
   const data = collectLoketForm();
-  if(!data.nama){ toast('Nama Pasien wajib diisi.', 'err'); return; }
+  if(!data.nama){ toast((CURRENT_LOKET_KATEGORI==='lingkungan' ? 'Nama Instansi' : 'Nama Pasien') + ' wajib diisi.', 'err'); return; }
   SIMPAN_LOKET_BUSY = true;
   const btnSimpan = document.getElementById('btnSimpanLoket');
   if(btnSimpan) btnSimpan.disabled = true;
